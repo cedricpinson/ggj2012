@@ -19,8 +19,11 @@ var main = function() {
         viewer.getCamera().setClearColor([0.0, 0.0, 0.0, 0.0]);
         viewer.setSceneData(rotate);
         viewer.setupManipulator();
-        viewer.getManipulator().setTarget([CONF.space_width*0.5,CONF.space_height*0.5,0]);
         viewer.getManipulator().computeHomePosition();
+        viewer.getManipulator().setTarget([CONF.space_width*0.5,CONF.space_height*0.5,0]);
+        viewer.getManipulator().setDistance( 20 );
+        viewer.getManipulator().update(0,0);
+
         viewer.run();
 
     } catch (er) {
