@@ -1,9 +1,9 @@
 var CONF = {
-    space_width: 10,
-    space_height: 10,
+    space_width: 20,
+    space_height: 20,
     
-    boid_speed: 0.001,
-    boid_nbr : 10
+    boid_speed: 1.0,
+    boid_nbr : 20
 };
 
 function newBoid(id, x, y, u, v) {
@@ -31,7 +31,7 @@ function newSpace() {
     };
 
     space.newRandomBoid = function() {
-	var boid = newBoid(id++, Math.random()*W, Math.random()*H, Math.random(), Math.random());
+	var boid = newBoid(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random());
 	space.boidsList.push(boid);
 	space.boidsMap[boid.id] = boid;
 	return boid;
@@ -43,6 +43,19 @@ function newSpace() {
             var b = space.boidsList[i];
             var v = osg.Vec3.mult(b.v, dt*b.speed, []);
             osg.Vec3.add(b.pos, v, b.pos);
+
+	    if (b.pos[0] > space.width) {
+		b.pos[0] -= space.width;
+	    } else if (b.pos[0] < 0) {
+		b.pos[0] += space.width;
+	    }
+
+	    if (b.pos[1] > space.height) {
+		b.pos[1] -= space.height;
+	    } else if (b.pos[1] < 0) {
+		b.pos[1] += space.height;
+	    }
+	    
             b.geom.updatePosition(b.pos);
         }
     };
@@ -71,6 +84,8 @@ MainUpdate.prototype = {
             this._lastUpdate = t;
         }
         var dt = t - this._lastUpdate;
+
+        this._lastUpdate = t;
 
 	this._space.update(dt);
         
