@@ -26,6 +26,7 @@ var main = function() {
         osg.log("exception in osgViewer " + er);
         alert("exception in osgViewer " + er);
     }
+
 };
 
 
@@ -34,8 +35,11 @@ var createScene = function () {
     
     root.addChild(osg.createTexturedBoxGeometry(0,0,0,
                                                 2,2,2));
+    mainUpdate = new MainUpdate();
+    root.addUpdateCallback(mainUpdate);
 
-    root.addUpdateCallback(new MainUpdate());
+    $('#3DView').mousemove(mainUpdate.playerInput);
+
     return root;
 };
 
