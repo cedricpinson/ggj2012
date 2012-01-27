@@ -9,9 +9,18 @@ var BoidGeometry = function() {
 };
 
 BoidGeometry.prototype = {
-    updatePosition: function(pos) {
+    updatePosition: function(pos, vec) {
         //osg.log(pos);
         this.node.dirtyBound();
-        osg.Matrix.makeTranslate(pos[0], pos[1], pos[2], this.node.getMatrix());
+        var target = [];
+        target[0] = pos[0]+vec[0];
+        target[1] = pos[1]+vec[1];
+        target[2] = pos[2]+vec[2];
+
+        var l = [];
+        osg.Matrix.makeLookAt(pos, target,[0,0,1], l);
+        osg.Matrix.inverse(l, this.node.getMatrix());
+        //osg.Matrix.makeTranslate(pos[0], pos[1], pos[2], this.node.getMatrix());
     }
 };
+
