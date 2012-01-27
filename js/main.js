@@ -29,12 +29,11 @@ var main = function() {
 
 };
 
-
+var RootScene;
 var createScene = function () {
     var root = new osg.Node();
+    RootScene = root;
     
-    root.addChild(osg.createTexturedBoxGeometry(0,0,0,
-                                                2,2,2));
     mainUpdate = new MainUpdate();
     root.addUpdateCallback(mainUpdate);
 
