@@ -10,7 +10,8 @@ var BoidGeometry = function() {
 
 BoidGeometry.prototype = {
     updatePosition: function(pos) {
-        osg.log(pos);
+        //osg.log(pos);
+        this.node.dirtyBound();
         osg.Matrix.makeTranslate(pos[0], pos[1], pos[2], this.node.getMatrix());
     }
 };
