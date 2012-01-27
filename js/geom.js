@@ -1,8 +1,17 @@
 
 var BoidGeometry = function() {
     var mt = new osg.MatrixTransform();
+
+    if (BoidGeometry.stateSet === undefined) {
+        BoidGeometry.stateSet = new osg.StateSet();
+        var texture = new osg.Texture();
+        texture.setImage(osgDB.readImage('data/Black.png'));
+        BoidGeometry.stateSet.setTextureAttributeAndMode(0, texture);
+    }
+
     var cube = osg.createTexturedBoxGeometry(0,0,0,
                                              1,1,1);
+    cube.setStateSet(BoidGeometry.stateSet);
     mt.addChild(cube);
     this.node = mt;
     RootScene.addChild(this.node);
