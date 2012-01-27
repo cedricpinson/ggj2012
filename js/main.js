@@ -29,13 +29,13 @@ var main = function() {
 };
 
 
-
 var createScene = function () {
     var root = new osg.Node();
     
     root.addChild(osg.createTexturedBoxGeometry(0,0,0,
                                                 2,2,2));
-    
+
+    root.addUpdateCallback(new MainUpdate());
     return root;
 };
 
