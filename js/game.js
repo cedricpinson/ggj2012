@@ -56,7 +56,7 @@ function newSpace() {
 		b.pos[1] += space.height;
 	    }
 	    
-            b.geom.updatePosition(b.pos);
+            b.geom.updatePosition(b.pos, b.v);
         }
     };
 
