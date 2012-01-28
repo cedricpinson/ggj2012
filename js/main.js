@@ -111,6 +111,18 @@ var createScene = function () {
     $('body').keydown(function(event) {
 	mainUpdate.playerInputDown(event)
     });
+
+    // Audio
+    var audio = $('#Track01').get(0);   
+    /*
+      audio.addEventListener('ended', function(){
+      audio.currentTime = 0;
+      }, true);
+      audio.addEventListener('play', function(){
+      }, true);
+    */
+    audio.play();
+
     
     return makeFilter(root);
     return root;

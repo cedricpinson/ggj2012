@@ -226,7 +226,9 @@ function newPlayer(id, x, y, u, v) {
 			b2.child = b1.child;
 
 			delete b1.child;
-
+			var audio = $('#Ahhh').get(0);   
+			audio.currentTime = 0;
+			audio.play();
 			osg.log("LOCKED!");
 			return;
 		    }
@@ -292,10 +294,16 @@ function newSpace() {
 	
     };
 
-    for(var i=0; i < CONF.boid_nbr; i++) {
+
+    function genBoids() {
 	space.newRandomBoid();
+	if ( space.boidsList.length < CONF.boid_nbr) {
+	    setTimeout(genBoids, 2000*Math.random());
+	}
     }
-        
+
+    genBoids();
+
     return space;
 }
 
