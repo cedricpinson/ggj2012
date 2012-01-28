@@ -1,18 +1,32 @@
 
 var BoidGeometry = function() {
     var mt = new osg.MatrixTransform();
-
+    var model, cube;
     if (BoidGeometry.stateSet === undefined) {
         BoidGeometry.stateSet = new osg.StateSet();
         var texture = new osg.Texture();
         texture.setImage(osgDB.readImage('data/Black.png'));
         BoidGeometry.stateSet.setTextureAttributeAndMode(0, texture);
+        model = new osg.MatrixTransform();
+        model.setMatrix(osg.Matrix.makeScale(0.01, 0.01, 0.01, []));
+        model.itemToIntersect = { name: 'model'};
+        jQuery.getJSON('data/monster.osgjs', function(data) {
+            var m = osgDB.parseSceneGraph(data);
+            m.setName("model_data");
+            model.addChild(m);
+            model.setName("model_instance");
+        });
+
+        BoidGeometry.model = model;
+        cube = osg.createTexturedBoxGeometry(0,0,0,
+                                                 1,1,1);
+        cube.setName("cube_data");
+        BoidGeometry.cube = cube;
     }
 
-    var cube = osg.createTexturedBoxGeometry(0,0,0,
-                                             1,1,1);
-    cube.setStateSet(BoidGeometry.stateSet);
-    mt.addChild(cube);
+    var geom = BoidGeometry.model;
+    geom.setStateSet(BoidGeometry.stateSet);
+    mt.addChild(geom);
     this.node = mt;
     RootScene.addChild(this.node);
 };
