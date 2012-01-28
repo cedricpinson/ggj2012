@@ -14,26 +14,44 @@ var CONF = {
     player_speed: 6.0,
     key_step: 1,
     min_chain: 3,
-    chain_timer: 3.0,
+    chain_timer: 1.0,
 
     white_kill_d: 1.0,
 
     WHITE: 1,
     BLACK: 2,
 
-    boids_nbr: { 1: 25,
-		 2: 75 }
+    boids_nbr: { 1: 10,
+		 2: 90 }
 };
 
 function killChain(b) {
-    var bb = b;
-    delete bb.parent.child;
-    while(bb) {
+
+    function killBoid(bb) {
 	var child = bb.child;
-	bb.speed = CONF.boid_speed;
+	if (bb.player === true) {
+	    bb.speed = CONF.player_speed;
+	} else {
+	    bb.speed = CONF.boid_speed;
+	}
 	delete bb.parent;
 	delete bb.child;
-	bb.locked = false;
+	
+	if (bb.player !== true) {
+	    setTimeout(function() {
+		bb.locked = false;
+		osg.log(bb.id+" unlocked");
+	    }, CONF.chain_timer*1000);
+	}
+	return child;
+    }
+    
+    var bb = b;
+    if (bb.parent) {
+	delete bb.parent.child;
+    }
+    while(bb) {
+	child = killBoid(bb);
 	bb = child;
     }
 }
@@ -112,7 +130,7 @@ function newBoid(id, x, y, u, v, color) {
                 continue;
             }
             	    
-            if (b1.color === CONF.BLACK && b1.parent === undefined && b2.anchor !== undefined && b2.child === undefined) {
+            if (b1.color === CONF.BLACK && b1.locked !== true && b1.parent === undefined && b2.anchor !== undefined && b2.child === undefined) {
                 if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) {
                     b1.locked = true;
                     b1.parent = b2;
@@ -231,6 +249,15 @@ function newPlayer(id, x, y, u, v) {
 		if (b1.id === b2.id) {
 		    continue;
 		}
+
+		if (b2.color === CONF.WHITE) {
+		    var dir = osg.Vec3.sub(b1.pos, b2.pos, []);         
+		    var d = osg.Vec3.length(dir);
+		    if (d < CONF.white_kill_d) {
+			killChain(b1);
+			return;
+		    }
+		}
 		
 		if (b2.anchor !== undefined && b2.child === undefined && b1.child !== b2 && b1.count > CONF.min_chain) {
 		    if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) {
@@ -323,7 +350,7 @@ function newSpace() {
     
     setTimeout(function() {
 	genBoids(CONF.WHITE);
-    }, 30000);
+    }, 10000);
 
     return space;
 }

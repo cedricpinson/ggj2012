@@ -143,7 +143,7 @@ loadModel.models = {};
 
 var getRandomModel = function(color) {
     if (getRandomModel.loaded === undefined) {
-        loadModel("data/stop.osgjs");
+	loadModel("data/stop.osgjs");
         loadModel("data/arbre.osgjs");
         loadModel("data/bilboquet.osgjs");
         loadModel("data/bite.osgjs");
@@ -153,14 +153,20 @@ var getRandomModel = function(color) {
         loadModel("data/hero.osgjs");
         loadModel("data/gamin.osgjs");
         loadModel("data/goo.osgjs");
-        loadModel("data/tomb.osgjs");
-        loadModel("data/tulip.osgjs");
+	loadModel("data/tomb.osgjs");
+	loadModel("data/tulip.osgjs");	
     }
     var node = new osg.Node();
     var keys = Object.keys(loadModel.models);
     var index = Math.floor((Math.random() * keys.length));
-    var selected = keys[index];
-
+    
+    var selected;
+    if (color === "white") {
+	selected = "data/cromosome.osgjs";
+    } else {
+	selected = "data/tomb.osgjs";
+    }
+    
     if (color !== undefined) {
         var material;
         material = new osg.Material();
