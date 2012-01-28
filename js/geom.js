@@ -78,7 +78,7 @@ var loadModel = function(url) {
                 "float nbEye = 4.0;",
                 "void main(void) {",
                 "  gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(Vertex,1.0);",
-                "  vec2 uv = vec2(TexCoord1[0],TexCoord1[1]/nbEye) + float(eye)*1.0/nbEye;",
+                "  vec2 uv = vec2(TexCoord1[0], TexCoord1[1]/nbEye + float(eye)*1.0/nbEye);",
                 "  //uv = vec2(TexCoord1[0],TexCoord1[1]);",
                 "  FragTexCoord0 = uv;",
                 "}",
