@@ -110,6 +110,7 @@ var getRandomModel = function(color) {
         loadModel("data/blob.osgjs");
         loadModel("data/calebasse.osgjs");
         loadModel("data/cromosome.osgjs");
+        loadModel("data/hero.osgjs");
         loadModel("data/gamin.osgjs");
         loadModel("data/goo.osgjs");
         loadModel("data/tomb.osgjs");

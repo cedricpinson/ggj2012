@@ -48,14 +48,6 @@
                                 "Shininess": 10, 
                                 "Specular": [ 0.9, 0.9, 0.9, 1]
                               }
-                            },
-                            {
-                              "osg.BlendFunc": {
-                                "DestinationAlpha": "ONE_MINUS_SRC_ALPHA", 
-                                "DestinationRGB": "ONE_MINUS_SRC_ALPHA", 
-                                "SourceAlpha": "SRC_ALPHA", 
-                                "SourceRGB": "SRC_ALPHA"
-                              }
                             } ], 
                             "TextureAttributeList": [ [  ],
                             [ {
