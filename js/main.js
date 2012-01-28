@@ -1,3 +1,5 @@
+var mainUpdate;
+
 var main = function() {
     var canvas = document.getElementById("3DView");
     var w = window.innerWidth;
@@ -11,7 +13,7 @@ var main = function() {
     var stats = document.getElementById("Stats");
 
     var viewer;
-    try {
+  //  try {
         viewer = new osgViewer.Viewer(canvas, {antialias : true, alpha: true });
         viewer.init();
         var rotate = new osg.MatrixTransform();
@@ -64,6 +66,9 @@ var main = function() {
             if (hit) {
                 osg.log("hit " + hits.item.getName());
                 osg.log("hit point" + hits.point);
+		if (hits.point) {
+		    mainUpdate.playerInput(hits.point);
+		}
             }
         };
         viewer.getManipulator().mouseup = mouseup;
@@ -72,10 +77,10 @@ var main = function() {
 
         viewer.run();
 
-    } catch (er) {
+ /*   } catch (er) {
         osg.log("exception in osgViewer " + er);
         alert("exception in osgViewer " + er);
-    }
+    }*/
 
 };
 
@@ -98,9 +103,14 @@ var createScene = function () {
 
     mainUpdate = new MainUpdate();
     root.addUpdateCallback(mainUpdate);
-
-    $('#3DView').mousemove(mainUpdate.playerInput);
-
+    
+    $('#3DView').keyup(function(event) {
+	mainUpdate.playerInputUp(event);
+    });
+    $('#3DView').keydown(function(event) {
+	mainUpdate.playerInputDown(event)
+    });
+    
     return makeFilter(root);
     return root;
 };
