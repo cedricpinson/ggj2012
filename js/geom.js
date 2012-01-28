@@ -22,10 +22,15 @@ var BoidGeometry = function() {
                                                  1,1,1);
         cube.setName("cube_data");
         BoidGeometry.cube = cube;
+
+        var m = new osg.Material();
+        m.setDiffuse([1,0,1,1]);
+        mt.getOrCreateStateSet().setAttributeAndMode(m);
+    } else {
+        mt.setStateSet(BoidGeometry.stateSet);
     }
 
-    var geom = BoidGeometry.model;
-    geom.setStateSet(BoidGeometry.stateSet);
+    var geom = BoidGeometry.cube;
     mt.addChild(geom);
     this.node = mt;
     RootScene.addChild(this.node);
