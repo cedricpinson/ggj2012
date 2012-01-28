@@ -14,7 +14,8 @@ var CONF = {
     player_rot: 5.0,
     player_speed: 6.0,
     key_step: 1,
-    min_chain: 3
+    min_chain: 3,
+    chain_timer: 3.0
 };
 
 function newBoid(id, x, y, u, v) {
@@ -45,8 +46,8 @@ function newBoid(id, x, y, u, v) {
 
             // wrap mode
             if (d > CONF.boid_grap_dist * 3) {
-		//b1.timer += dt;
-		//if (b1.timer < 5.0) {
+		b1.timer += dt;
+		if (b1.timer < CONF.chain_timer) {
                     if (dir[0] > 3*CONF.boid_grap_dist) {
 			parentPosition[0] += CONF.space_width;
 			parentAnchor[0] += CONF.space_width;
@@ -60,25 +61,25 @@ function newBoid(id, x, y, u, v) {
                     } else if (dir[1] < -3*CONF.boid_grap_dist) {
 			childPosition [ 1 ] += CONF.space_height;
                     }
-	    /*} else { 
+		} else { 
 		    var bb = b1;
 		    delete bb.parent.child;
 		    while(bb) {
 			var child = bb.child;
 			bb.speed = CONF.boid_speed;
 			delete bb.parent;
-			delete bb.locked;
 			delete bb.child;
+			bb.locked = false;
 			bb = child;
 		    }
 		    return;
-		    }*/
-            } /*else {
+		}
+            } else {
 		b1.timer = 0.0;
-	    }*/
-
+	    }
+	    
             var childDirection = [];
-
+	    
             osg.Vec3.sub([ (parentPosition[0] + parentAnchor[0]) / 2 ,
                            (parentPosition[1] + parentAnchor[1]) / 2 ,
                            0, 0], childPosition, childDirection);
@@ -181,7 +182,7 @@ function newBoid(id, x, y, u, v) {
 	
 	b.pos[2] = 0.0;
 
-	if (b.locked) {
+	if (b.locked === true) {
 	    b.anchor = [];
 	    osg.Vec3.add(b.pos, osg.Vec3.mult(b.v, CONF.boid_anchor_dist, []), b.anchor);
 	} else {
