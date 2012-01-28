@@ -44,11 +44,13 @@ var main = function() {
                 if (hit[l2].itemToIntersect !== undefined) {
                     thit = hits[0].triangleHit;
                     itemSelected = hit[l2];
+                    point = hits[0].point;
                     break;
                 }
             }
             return { 'item': itemSelected,
-                     'hit': thit
+                     'hit': thit,
+                     'point': point
                    };
         };
         viewer.getManipulator().getIntersection = getIntersection;
@@ -60,16 +62,8 @@ var main = function() {
             var hits = this.getIntersection();
             var hit = hits.hit;
             if (hit) {
-                var vec1 = osg.Vec3.mult(hit.v1, hit.r1, []);
-                var vec2 = osg.Vec3.mult(hit.v2, hit.r2, []);
-                var vec3 = osg.Vec3.mult(hit.v3, hit.r3, []);
-                var f = [];
-                f[0] = vec1[0] + vec2[0] + vec3[0];
-                f[1] = vec1[1] + vec2[1] + vec3[1];
-                f[2] = vec1[2] + vec2[2] + vec3[2];
-
                 osg.log("hit " + hits.item.getName());
-                osg.log("hit point" + f);
+                osg.log("hit point" + hits.point);
             }
         };
         viewer.getManipulator().mouseup = mouseup;
