@@ -87,10 +87,10 @@
                     },
                     {
                       "osg.Geometry": {
-                        "Name": "_8_-_Default_1", 
+                        "Name": "eye", 
                         "StateSet": {
                           "osg.StateSet": {
-                            "Name": "_8_-_Default", 
+                            "Name": "eye", 
                             "AttributeList": [ {
                               "osg.Material": {
                                 "Ambient": [ 1, 1, 1, 1], 

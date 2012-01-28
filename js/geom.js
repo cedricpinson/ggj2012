@@ -1,5 +1,68 @@
+var FindEye = function() {
+    osg.NodeVisitor.call(this, osg.NodeVisitor.TRAVERSE_ALL_CHILDREN); 
+    this.init();
+};
+
+FindEye.prototype = osg.objectInehrit( osg.NodeVisitor.prototype, {
+    init: function() {
+        this.found = [];
+    },
+
+    apply: function(node) {
+        var stateset = node.getStateSet();
+        if (stateset) {
+            if (stateset.getName() === "eye" ) {
+                this.found.push(stateset);
+            }
+        }
+        this.traverse(node);
+    }
+
+});
+
+
+
 var loadModel = function(url) {
     if (loadModel.models[url] === undefined) {
+
+        var getShader = function() {
+            var vertexshader = [
+                "",
+                "#ifdef GL_ES",
+                "precision highp float;",
+                "#endif",
+                "attribute vec3 Vertex;",
+                "attribute vec2 TexCoord1;",
+                "varying vec2 FragTexCoord0;",
+                "uniform mat4 ModelViewMatrix;",
+                "uniform mat4 ProjectionMatrix;",
+                "void main(void) {",
+                "  gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(Vertex,1.0);",
+                "  FragTexCoord0 = TexCoord1;",
+                "}",
+                ""
+            ].join('\n');
+
+            var fragmentshader = [
+                "#ifdef GL_ES",
+                "precision highp float;",
+                "#endif",
+                "uniform sampler2D Texture1;",
+                "varying vec2 FragTexCoord0;",
+
+                "void main() {",
+                "  vec4 c = texture2D(Texture1, FragTexCoord0);",
+                "  gl_FragColor = c;",
+                "}"
+            ].join("\n");
+
+
+            var program = new osg.Program(
+                new osg.Shader(gl.VERTEX_SHADER, vertexshader),
+                new osg.Shader(gl.FRAGMENT_SHADER, fragmentshader));
+            return program;
+        };
+
 
         var model = new osg.MatrixTransform();
         var s = 3.125;
@@ -13,15 +76,32 @@ var loadModel = function(url) {
             m.setName(url);
             model.addChild(m);
             model.setName(url + "_instance");
+
+            if (loadModel.shader === undefined) {
+                loadModel.shader = getShader();
+            }
+            var eyeFinder = new FindEye();
+            model.accept(eyeFinder);
+            if (eyeFinder.found.length === 0) {
+                osg.log("eye not found in " + url);
+            }
+            var stateSet = eyeFinder.found[0];
+            stateSet.setAttributeAndMode(loadModel.shader);
+            stateSet.addUniform(osg.Uniform.createInt1(1,"Texture1"));
+            var texture = new osg.Texture();
+            texture.setImage(osgDB.readImage('data/eye.png'));
+            stateSet.setTextureAttributeAndMode(0, texture);
+
         });
         loadModel.models[url] = model;
+
     }
 
     return loadModel.models[url];
 };
 loadModel.models = {};
 
-var getRandomModel = function() {
+var getRandomModel = function(color) {
     if (getRandomModel.loaded === undefined) {
         loadModel("data/stop.osgjs");
         loadModel("data/arbre.osgjs");
@@ -39,7 +119,20 @@ var getRandomModel = function() {
     var keys = Object.keys(loadModel.models);
     var index = Math.floor((Math.random() * keys.length));
     var selected = keys[index];
-    return loadModel(selected);
+
+    if (color !== undefined) {
+        var material;
+        material = new osg.Material();
+        if (color === "black") {
+            material.setDiffuse([0,0,0,1]);
+        } else if (color === "white") {
+            material.setDiffuse([1,1,1,1]);
+        }
+        
+        node.getOrCreateStateSet().setAttributeAndMode(material, osg.StateAttribute.OVERRIDE);
+    }
+    node.addChild(loadModel(selected));
+    return node;
 };
 
 var getMonsterDefault2 = function() {
@@ -82,7 +175,10 @@ var BoidGeometry = function() {
         mt.setStateSet(BoidGeometry.stateSet);
     }
 
-    var geom = getRandomModel(); //BoidGeometry.model;
+    var list = ["white", "black"];
+    var color = Math.floor(Math.random() * (list.length -0.00001));
+
+    var geom = getRandomModel(list[color]); //BoidGeometry.model;
     mt.addChild(geom);
     this.node = mt;
     RootScene.addChild(this.node);
