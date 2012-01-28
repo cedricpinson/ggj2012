@@ -179,7 +179,6 @@ var loadModel = function(url) {
             if (eyeFinder.found.length === 0) {
                 osg.log("eye not found in " + url);
             } else {
-
                 stateSet = eyeFinder.found[0];
                 stateSet.setAttributeAndMode(loadModel.shader);
                 stateSet.addUniform(osg.Uniform.createInt1(1,"Texture1"));
@@ -194,6 +193,11 @@ var loadModel = function(url) {
                 stateSet.setAttributeAndMode(loadModel.shadowShader);
                 stateSet.addUniform(osg.Uniform.createInt1(1,"Texture1"));
                 stateSet.setRenderingHint('TRANSPARENT_BIN');
+                if (loadModel.depth === undefined) {
+                    loadModel.depth = new osg.Depth();
+                    loadModel.depth.setWriteMask(false);
+                }
+                stateSet.setAttributeAndMode(loadModel.depth);
             }
 
         });
@@ -237,6 +241,8 @@ var getRandomModel = function(color) {
         if (color === "black") {
             material.setDiffuse([0,0,0,1]);
         } else if (color === "white") {
+            material.setEmission([0.4,0.4,0.4,1]);
+            material.setAmbient([0.4,0.4,0.4,1]);
             material.setDiffuse([1,1,1,1]);
         }
         
