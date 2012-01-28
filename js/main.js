@@ -68,7 +68,7 @@ var main = function() {
                 osg.log("hit " + hits.item.getName());
                 osg.log("hit point" + hits.point);
 		if (hits.point) {
-		    mainUpdate.playerInput(hits.point);
+                    mainUpdate.playerInput(hits.point);
 		}
             }
         };
@@ -99,6 +99,8 @@ var createScene = function () {
                                                0,CONF.space_height,0);
 
     var texture = new osg.Texture();
+    texture.setWrapS(osg.Texture.CLAMP_TO_EDGE);
+    texture.setWrapT(osg.Texture.CLAMP_TO_EDGE);
     var depth = new osg.Depth();
     depth.setWriteMask(false);
     plane.getOrCreateStateSet().setAttributeAndMode(depth);
