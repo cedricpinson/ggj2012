@@ -194,8 +194,7 @@ var getMonsterDefault2 = function() {
     return model;
 };
 
-
-var BoidGeometry = function() {
+var BoidGeometry = function(color) {
     var mt = new osg.MatrixTransform();
     var model, cube;
     if (BoidGeometry.stateSet === undefined) {
@@ -222,10 +221,12 @@ var BoidGeometry = function() {
         mt.setStateSet(BoidGeometry.stateSet);
     }
 
-    var list = ["white", "black"];
-    var color = Math.floor(Math.random() * (list.length -0.00001));
+    if (color === undefined) {
+	var list = ["white", "black"];
+	color = list[Math.floor(Math.random() * (list.length -0.00001))];
+    }
 
-    var geom = getRandomModel(list[color]); //BoidGeometry.model;
+    var geom = getRandomModel(color); //BoidGeometry.model;
     mt.addChild(geom);
     this.node = mt;
     RootScene.addChild(this.node);

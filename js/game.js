@@ -1,8 +1,7 @@
 var CONF = {
     space_width: 50,
     space_height: 50,
-    boid_nbr : 100,
-    
+
     boid_speed: 2.0,
     boid_range : 5.0,
     boid_sep: 0.005,
@@ -15,17 +14,40 @@ var CONF = {
     player_speed: 6.0,
     key_step: 1,
     min_chain: 3,
-    chain_timer: 3.0
+    chain_timer: 3.0,
+
+    white_kill_d: 1.0,
+
+    WHITE: 1,
+    BLACK: 2,
+
+    boids_nbr: { 1: 25,
+		 2: 75 }
 };
 
-function newBoid(id, x, y, u, v) {
-    var g = new BoidGeometry();
+function killChain(b) {
+    var bb = b;
+    delete bb.parent.child;
+    while(bb) {
+	var child = bb.child;
+	bb.speed = CONF.boid_speed;
+	delete bb.parent;
+	delete bb.child;
+	bb.locked = false;
+	bb = child;
+    }
+}
+
+function newBoid(id, x, y, u, v, color) {
+    var col = color == CONF.WHITE ? "white" : "black";
+    var g = new BoidGeometry(col);
     var boid = {
 	id: id,
 	pos: [ x, y, 0 ],
 	v: [ u, v, 0 ],
 	speed: CONF.boid_speed,
-        geom: g
+        geom: g,
+	color: color
     };
 
     boid.update = function(dt, space) {
@@ -62,16 +84,7 @@ function newBoid(id, x, y, u, v) {
 			childPosition [ 1 ] += CONF.space_height;
                     }
 		} else { 
-		    var bb = b1;
-		    delete bb.parent.child;
-		    while(bb) {
-			var child = bb.child;
-			bb.speed = CONF.boid_speed;
-			delete bb.parent;
-			delete bb.child;
-			bb.locked = false;
-			bb = child;
-		    }
+		    killChain(b1);
 		    return;
 		}
             } else {
@@ -98,8 +111,8 @@ function newBoid(id, x, y, u, v) {
             if (b1.id === b2.id) {
                 continue;
             }
-            
-            if (b1.parent === undefined && b2.anchor !== undefined && b2.child === undefined) {
+            	    
+            if (b1.color === CONF.BLACK && b1.parent === undefined && b2.anchor !== undefined && b2.child === undefined) {
                 if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) {
                     b1.locked = true;
                     b1.parent = b2;
@@ -204,7 +217,7 @@ boid.computeAnchorPosition = function(position, result) {
 }
 
 function newPlayer(id, x, y, u, v) {
-    var boid = newBoid(id, x, y, u, v);
+    var boid = newBoid(id, x, y, u, v, CONF.BLACK);
     boid.speed = CONF.player_speed;
     boid.vTo = [ boid.v[0], boid.v[1], boid.v[2] ];
     boid.locked = true;
@@ -221,15 +234,15 @@ function newPlayer(id, x, y, u, v) {
 		
 		if (b2.anchor !== undefined && b2.child === undefined && b1.child !== b2 && b1.count > CONF.min_chain) {
 		    if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) {
-
+			
 			b1.child.parent = b2;
 			b2.child = b1.child;
-
+			
 			delete b1.child;
 			var audio = $('#Ahhh').get(0);   
 			audio.currentTime = 0;
 			audio.play();
-			osg.log("LOCKED!");
+
 			return;
 		    }
 		}
@@ -268,13 +281,13 @@ function newSpace() {
 	ctrl: [0, 0, 0]
     };
     
-    space.newRandomBoid = function() {
+    space.newRandomBoid = function(color) {
 	var boid;
 	if (id === 0) {
 	    boid = newPlayer(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random());
 	    space.player1 = boid;
 	} else {
-	    boid = newBoid(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random());
+	    boid = newBoid(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random(), color);
 	}
 	space.boidsList.push(boid);
 	space.boidsMap[boid.id] = boid;
@@ -294,15 +307,23 @@ function newSpace() {
 	
     };
 
-
-    function genBoids() {
-	space.newRandomBoid();
-	if ( space.boidsList.length < CONF.boid_nbr) {
-	    setTimeout(genBoids, 2000*Math.random());
+    var produced = { 1: 0,
+		     2: 0 }
+    function genBoids(color) {
+	space.newRandomBoid(color);
+	produced[color]++;
+	if ( produced[color] < CONF.boids_nbr[color]) {
+	    setTimeout(function() {
+		genBoids(color);
+	    }, 2000*Math.random());
 	}
     }
-
-    genBoids();
+    
+    genBoids(CONF.BLACK);
+    
+    setTimeout(function() {
+	genBoids(CONF.WHITE);
+    }, 30000);
 
     return space;
 }
