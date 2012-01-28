@@ -35,15 +35,19 @@ var getBlinkTexture = function() {
 var UpdateCallbackBlinkEye = function() {
 };
 UpdateCallbackBlinkEye.prototype = {
-    switchEye: function(node) {
-        var index = Math.floor(Math.random() * (getTotalEyes() - 0.0001));
+    switchEye: function(node, t) {
         var stateSet = node.getStateSet();
         var uniform = stateSet.getUniform('eye');
-        uniform.get()[0] = index;
+        uniform.get()[0] = (uniform.get()[0] + 1)%getTotalEyes();
         uniform.dirty();
+        if (uniform.get()[0] === 0 || uniform.get()[0] === 3) {
+            this.nextSwitch = t + (0.2+Math.random()*1.0);
+        } else {
+            this.nextSwitch = t + 0.05;
+        }
     },
     getNextTimeStamp: function() {
-        return 0.3 + Math.random() * 1.0;
+        return 0.1;
     },
     update: function(node, nv) {
         var t = nv.getFrameStamp().getSimulationTime();
@@ -53,8 +57,7 @@ UpdateCallbackBlinkEye.prototype = {
         }
 
         if (t > this.nextSwitch) {
-            this.switchEye(node);
-            this.nextSwitch = t + this.getNextTimeStamp();
+            this.switchEye(node, t);
         }
         return true;
     }
