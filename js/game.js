@@ -21,9 +21,11 @@ var CONF = {
     WHITE: 1,
     BLACK: 2,
 
-    boids_nbr: { 1: 10,
-		 2: 90 }
+    boids_nbr: { 1: 25,
+		 2: 75 }
 };
+
+var chains = [];
 
 function killChain(b) {
 
@@ -140,6 +142,9 @@ function newBoid(id, x, y, u, v, color) {
 		    for(var bb=b1, count=0; bb !== undefined; count++) {
 			bb.count = count;
 			bb = bb.parent;
+			if (bb === b1) {
+			    break;
+			}
 		    }
 		    
                     osg.log("LOCKED!");
@@ -243,35 +248,47 @@ function newPlayer(id, x, y, u, v) {
     boid.update = function(dt, space) {
 	
 	var b1 = boid;
-	if (b1.child !== undefined) {
-	    for(var j=space.boidsList.length-1; j >= 0 ; j--) {
-		var b2 = space.boidsList[j];
-		if (b1.id === b2.id) {
-		    continue;
-		}
 
-		if (b2.color === CONF.WHITE) {
-		    var dir = osg.Vec3.sub(b1.pos, b2.pos, []);         
-		    var d = osg.Vec3.length(dir);
-		    if (d < CONF.white_kill_d) {
+	for(var j=space.boidsList.length-1; j >= 0 ; j--) {
+	    var b2 = space.boidsList[j];
+	    if (b1.id === b2.id) {
+		continue;
+	    }
+	    
+	    if (b1.protect !== true && b2.color === CONF.WHITE) {
+		var dir = osg.Vec3.sub(b1.pos, b2.pos, []);         
+		var d = osg.Vec3.length(dir);
+		if (d < CONF.white_kill_d) {
+		    if (b1.child) {
 			killChain(b1);
-			return;
+		    } else {
+			var c = chains.shift();
+			if (c) {
+			    killChain(c);
+			}
 		    }
+		    b1.protect = true;
+		    setTimeout(function() {
+			b1.protect = false;
+		    }, 1000);
+		    return;
 		}
-		
-		if (b2.anchor !== undefined && b2.child === undefined && b1.child !== b2 && b1.count > CONF.min_chain) {
-		    if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) {
-			
-			b1.child.parent = b2;
-			b2.child = b1.child;
-			
-			delete b1.child;
-			var audio = $('#Ahhh').get(0);   
-			audio.currentTime = 0;
-			audio.play();
-
-			return;
-		    }
+	    }
+	    
+	    if (b1.child && b2.anchor !== undefined && b2.child === undefined && b1.child !== b2 && b1.count > CONF.min_chain) {
+		if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) { // MAKE CHAIN
+		    
+		    b1.child.parent = b2;
+		    b2.child = b1.child;
+		    
+		    chains.push(b2)
+		    
+		    delete b1.child;
+		    var audio = $('#Ahhh').get(0);   
+		    audio.currentTime = 0;
+		    audio.play();
+		    
+		    return;
 		}
 	    }
 	}
