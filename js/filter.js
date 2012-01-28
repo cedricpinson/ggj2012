@@ -79,7 +79,7 @@ var createFilter = function(texture) {
 
             "void main() {",
             "  vec2 imageCoord = FragTexCoord0;",
-            "#if 0",
+            "#if 1",
             "  vec2 uvs[8];",
             "  uvs[0] = imageCoord + vec2(-resolution[0], -resolution[1]);",
             "  uvs[1] = imageCoord + vec2(-resolution[0], 0.0);",
@@ -164,6 +164,9 @@ var createFilter = function(texture) {
     stateSet.addUniform(osg.Uniform.createFloat2([1.0/window.innerWidth,1.0/window.innerHeight], "resolution"));
     stateSet.addUniform(osg.Uniform.createFloat4([1.0, 1.0, 1.0, 1.0], "foreground"));
     stateSet.addUniform(osg.Uniform.createFloat4([0.0, 0.0, 0.0, 1.0], "background"));
+
+//    stateSet.addUniform(osg.Uniform.createFloat4([1.0, 1.0, 1.0, 1.0], "background"));
+//    stateSet.addUniform(osg.Uniform.createFloat4([0.0, 0.0, 0.0, 1.0], "foreground"));
 
     stateSet.setAttributeAndMode(getShader());
 
