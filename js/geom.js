@@ -10,6 +10,7 @@ var FindEye = function() {
 FindEye.prototype = osg.objectInehrit( osg.NodeVisitor.prototype, {
     init: function() {
         this.found = [];
+        this.shadow = [];
     },
 
     apply: function(node) {
@@ -17,6 +18,10 @@ FindEye.prototype = osg.objectInehrit( osg.NodeVisitor.prototype, {
         if (stateset) {
             if (stateset.getName() === "eye" ) {
                 this.found.push(stateset);
+            }
+
+            if (stateset.getName().toLowerCase() === "shadow" ) {
+                this.shadow.push(stateset);
             }
         }
         this.traverse(node);
@@ -109,6 +114,44 @@ var loadModel = function(url) {
         };
 
 
+        var getShadowShader = function() {
+            var vertexshader = [
+                "",
+                "#ifdef GL_ES",
+                "precision highp float;",
+                "#endif",
+                "attribute vec3 Vertex;",
+                "attribute vec2 TexCoord1;",
+                "varying vec2 FragTexCoord0;",
+                "uniform mat4 ModelViewMatrix;",
+                "uniform mat4 ProjectionMatrix;",
+                "void main(void) {",
+                "  gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(Vertex,1.0);",
+                "  FragTexCoord0 = TexCoord1;",
+                "}",
+                ""
+            ].join('\n');
+
+            var fragmentshader = [
+                "#ifdef GL_ES",
+                "precision highp float;",
+                "#endif",
+                "uniform sampler2D Texture1;",
+                "varying vec2 FragTexCoord0;",
+
+                "void main() {",
+                "  vec4 c = texture2D(Texture1, FragTexCoord0);",
+                "  gl_FragColor = c*c[3];",
+                "}"
+            ].join("\n");
+
+
+            var program = new osg.Program(
+                new osg.Shader(gl.VERTEX_SHADER, vertexshader),
+                new osg.Shader(gl.FRAGMENT_SHADER, fragmentshader));
+            return program;
+        };
+
         var model = new osg.MatrixTransform();
         var s = 3.125;
         var matrix = osg.Matrix.makeScale(s,s,s, []);
@@ -125,16 +168,34 @@ var loadModel = function(url) {
             if (loadModel.shader === undefined) {
                 loadModel.shader = getShader();
             }
+
+            if (loadModel.shadowShader === undefined) {
+                loadModel.shadowShader = getShadowShader();
+            }
+
             var eyeFinder = new FindEye();
+            var stateSet;
             model.accept(eyeFinder);
             if (eyeFinder.found.length === 0) {
                 osg.log("eye not found in " + url);
+            } else {
+
+                stateSet = eyeFinder.found[0];
+                stateSet.setAttributeAndMode(loadModel.shader);
+                stateSet.addUniform(osg.Uniform.createInt1(1,"Texture1"));
+                var texture = getBlinkTexture();
+                stateSet.setTextureAttributeAndMode(1, texture);
             }
-            var stateSet = eyeFinder.found[0];
-            stateSet.setAttributeAndMode(loadModel.shader);
-            stateSet.addUniform(osg.Uniform.createInt1(1,"Texture1"));
-            var texture = getBlinkTexture();
-            stateSet.setTextureAttributeAndMode(1, texture);
+
+            if (eyeFinder.shadow.length === 0) {
+                osg.log("shodow not found in " + url);
+            } else {
+                stateSet = eyeFinder.shadow[0];
+                stateSet.setAttributeAndMode(loadModel.shadowShader);
+                stateSet.addUniform(osg.Uniform.createInt1(1,"Texture1"));
+                stateSet.setRenderingHint('TRANSPARENT_BIN');
+            }
+
         });
         loadModel.models[url] = model;
 
@@ -210,7 +271,7 @@ var BoidGeometry = function(color) {
 
         BoidGeometry.model = model;
         cube = osg.createTexturedBoxGeometry(0,0,0,
-                                                 1,1,1);
+                                             1,1,1);
         cube.setName("cube_data");
         BoidGeometry.cube = cube;
 

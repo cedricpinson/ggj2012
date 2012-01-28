@@ -94,11 +94,14 @@ var createScene = function () {
     items.setNodeMask(1);
 
     
-    var plane = osg.createTexturedQuadGeometry(0,0,0,
+    var plane = osg.createTexturedQuadGeometry(0,0,-0.01,
                                                CONF.space_width,0,0,
                                                0,CONF.space_height,0);
 
     var texture = new osg.Texture();
+    var depth = new osg.Depth();
+    depth.setWriteMask(false);
+    plane.getOrCreateStateSet().setAttributeAndMode(depth);
     texture.setImage(osgDB.readImage('data/bg.png'));
     var m = new osg.Material();
     m.setEmission([1,1,1,1]);

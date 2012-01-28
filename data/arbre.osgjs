@@ -156,6 +156,85 @@
               }
             } ]
           }
+        },
+        {
+          "osg.MatrixTransform": {
+            "Name": "Bo_te07", 
+            "Matrix": [ 0.597542, 0, 0, 0, 0, 2.18225e-16, 0.982799, 0, 0, -0.58968, 1.30935e-16, 0, 0, -0.216431, 0, 1 ], 
+            "Children": [ {
+              "osg.MatrixTransform": {
+                "Matrix": [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.25, -0.25, 1 ], 
+                "Children": [ {
+                  "osg.Node": {
+                    "Children": [ {
+                      "osg.Geometry": {
+                        "Name": "Shadow", 
+                        "StateSet": {
+                          "osg.StateSet": {
+                            "Name": "Shadow", 
+                            "AttributeList": [ {
+                              "osg.Material": {
+                                "Ambient": [ 0.588235, 0.588235, 0.588235, 1], 
+                                "Diffuse": [ 1, 1, 1, 1], 
+                                "Emission": [ 0, 0, 0, 1], 
+                                "Shininess": 10, 
+                                "Specular": [ 0.9, 0.9, 0.9, 1]
+                              }
+                            },
+                            {
+                              "osg.BlendFunc": {
+                                "DestinationAlpha": "ONE_MINUS_SRC_ALPHA", 
+                                "DestinationRGB": "ONE_MINUS_SRC_ALPHA", 
+                                "SourceAlpha": "SRC_ALPHA", 
+                                "SourceRGB": "SRC_ALPHA"
+                              }
+                            } ], 
+                            "TextureAttributeList": [ [  ],
+                            [ {
+                              "osg.Texture": {
+                                "File": "shadow.png", 
+                                "MagFilter": "LINEAR", 
+                                "MinFilter": "LINEAR_MIPMAP_LINEAR", 
+                                "WrapS": "REPEAT", 
+                                "WrapT": "REPEAT"
+                              }
+                            } ] ]
+                          }
+                        }, 
+                        "PrimitiveSetList": [ {
+                          "DrawElementsUShort": {
+                            "Indices": {
+                              "Elements": [ 0, 2, 1, 3 ], 
+                              "ItemSize": 1, 
+                              "Type": "ELEMENT_ARRAY_BUFFER"
+                            }, 
+                            "Mode": "TRIANGLE_STRIP"
+                          }
+                        } ], 
+                        "VertexAttributeList": {
+                          "Normal": {
+                            "Elements": [ 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 ], 
+                            "ItemSize": 3, 
+                            "Type": "ARRAY_BUFFER"
+                          }, 
+                          "TexCoord1": {
+                            "Elements": [ 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 ], 
+                            "ItemSize": 3, 
+                            "Type": "ARRAY_BUFFER"
+                          }, 
+                          "Vertex": {
+                            "Elements": [ -0.25, 0.25, 0, 0.25, 0.25, 0, -0.25, 0.25, 0.5, 0.25, 0.25, 0.5 ], 
+                            "ItemSize": 3, 
+                            "Type": "ARRAY_BUFFER"
+                          }
+                        }
+                      }
+                    } ]
+                  }
+                } ]
+              }
+            } ]
+          }
         } ]
       }
     } ]
