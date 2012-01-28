@@ -1,3 +1,7 @@
+var getTotalEyes = function() {
+    return 3;
+};
+
 var FindEye = function() {
     osg.NodeVisitor.call(this, osg.NodeVisitor.TRAVERSE_ALL_CHILDREN); 
     this.init();
@@ -20,7 +24,41 @@ FindEye.prototype = osg.objectInehrit( osg.NodeVisitor.prototype, {
 
 });
 
+var getBlinkTexture = function() {
+    if (getBlinkTexture.texture === undefined) {
+        getBlinkTexture.texture = new osg.Texture();
+        getBlinkTexture.texture.setImage(osgDB.readImage('data/blink.png'));
+    }
+    return getBlinkTexture.texture;
+};
 
+var UpdateCallbackBlinkEye = function() {
+};
+UpdateCallbackBlinkEye.prototype = {
+    switchEye: function(node) {
+        var index = Math.floor(Math.random() * (getTotalEyes() - 0.0001));
+        var stateSet = node.getStateSet();
+        var uniform = stateSet.getUniform('eye');
+        uniform.get()[0] = index;
+        uniform.dirty();
+    },
+    getNextTimeStamp: function() {
+        return 0.3 + Math.random() * 1.0;
+    },
+    update: function(node, nv) {
+        var t = nv.getFrameStamp().getSimulationTime();
+
+        if (this.nextSwitch === undefined) {
+            this.nextSwitch = t + this.getNextTimeStamp();
+        }
+
+        if (t > this.nextSwitch) {
+            this.switchEye(node);
+            this.nextSwitch = t + this.getNextTimeStamp();
+        }
+        return true;
+    }
+};
 
 var loadModel = function(url) {
     if (loadModel.models[url] === undefined) {
@@ -36,9 +74,13 @@ var loadModel = function(url) {
                 "varying vec2 FragTexCoord0;",
                 "uniform mat4 ModelViewMatrix;",
                 "uniform mat4 ProjectionMatrix;",
+                "uniform int eye;",
+                "float nbEye = 4.0;",
                 "void main(void) {",
                 "  gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(Vertex,1.0);",
-                "  FragTexCoord0 = TexCoord1;",
+                "  vec2 uv = vec2(TexCoord1[0],TexCoord1[1]/nbEye) + float(eye)*1.0/nbEye;",
+                "  //uv = vec2(TexCoord1[0],TexCoord1[1]);",
+                "  FragTexCoord0 = uv;",
                 "}",
                 ""
             ].join('\n');
@@ -88,10 +130,8 @@ var loadModel = function(url) {
             var stateSet = eyeFinder.found[0];
             stateSet.setAttributeAndMode(loadModel.shader);
             stateSet.addUniform(osg.Uniform.createInt1(1,"Texture1"));
-            var texture = new osg.Texture();
-            texture.setImage(osgDB.readImage('data/eye.png'));
-            stateSet.setTextureAttributeAndMode(0, texture);
-
+            var texture = getBlinkTexture();
+            stateSet.setTextureAttributeAndMode(1, texture);
         });
         loadModel.models[url] = model;
 
@@ -133,6 +173,10 @@ var getRandomModel = function(color) {
         node.getOrCreateStateSet().setAttributeAndMode(material, osg.StateAttribute.OVERRIDE);
     }
     node.addChild(loadModel(selected));
+    var eyeSelected = osg.Uniform.createInt1(0, "eye");
+    node.getOrCreateStateSet().addUniform(eyeSelected);
+    node.addUpdateCallback(new UpdateCallbackBlinkEye());
+    
     return node;
 };
 
@@ -146,7 +190,6 @@ var getMonsterDefault2 = function() {
     });
     return model;
 };
-
 
 
 var BoidGeometry = function() {
