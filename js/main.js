@@ -17,7 +17,8 @@ var main = function() {
         viewer = new osgViewer.Viewer(canvas, {antialias : true, alpha: true });
         viewer.init();
         var rotate = new osg.MatrixTransform();
-        rotate.addChild(createScene());
+    var root = createScene();
+        rotate.addChild(root);
         viewer.getCamera().setClearColor([0.0, 0.0, 0.0, 0.0]);
         viewer.setSceneData(rotate);
     if (true) {
@@ -26,6 +27,15 @@ var main = function() {
         viewer.getManipulator().setTarget([CONF.space_width*0.5,CONF.space_height*0.5,0]);
         viewer.getManipulator().setDistance( 20 );
         viewer.getManipulator().update(0,0);
+
+        var UpdateCameraInverseMatrix = function() {
+            this.update = function(node, nv) {
+                var cameraInverseUniform = osg.Uniform.createMatrix4(osg.Matrix.makeIdentity([]),'CameraInverseMatrix');
+                viewer.getCamera().getOrCreateStateSet().addUniform(cameraInverseUniform);
+                return true;
+            };
+        };
+        root.addUpdateCallback(new UpdateCameraInverseMatrix());
 
         var getIntersection = function() {
             var hits = viewer.computeIntersections(this.clientX, this.clientY, 2);

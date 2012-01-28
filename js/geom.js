@@ -124,6 +124,7 @@ var loadModel = function(url) {
                 "attribute vec2 TexCoord1;",
                 "varying vec2 FragTexCoord0;",
                 "uniform mat4 ModelViewMatrix;",
+                "//uniform mat4 CameraInverseMatrix;",
                 "uniform mat4 ProjectionMatrix;",
                 "void main(void) {",
                 "  gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(Vertex,1.0);",
@@ -138,6 +139,7 @@ var loadModel = function(url) {
                 "#endif",
                 "uniform sampler2D Texture1;",
                 "varying vec2 FragTexCoord0;",
+
 
                 "void main() {",
                 "  vec4 c = texture2D(Texture1, FragTexCoord0);",
