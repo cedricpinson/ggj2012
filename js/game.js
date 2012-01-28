@@ -1,13 +1,19 @@
 var CONF = {
-    space_width: 100,
-    space_height: 100,
+    space_width: 50,
+    space_height: 50,
     boid_nbr : 100,
     
     boid_speed: 2.0,
     boid_range : 5.0,
     boid_sep: 0.005,
-    boid_align: 0.00125,
-    boid_cohesion: 0.025
+    boid_align: 0.0, // 0.00125,
+    boid_cohesion: 0.0, //0.025
+    boid_anchor_dist: -1.5,
+    boid_grap_dist: 1,
+
+    player_rot: 5.0,
+    player_speed: 6.0,
+    key_step: 1
 };
 
 function newBoid(id, x, y, u, v) {
@@ -19,7 +25,178 @@ function newBoid(id, x, y, u, v) {
 	speed: CONF.boid_speed,
         geom: g
     };
+
+    boid.update = function(dt, space) {
+	var b1 = boid;
+	var sep = [0,0,0];
+	var align = [0,0,0];
+	var cohesion = [0,0,0];
+	
+	if (b1.parent !== undefined && b1.parent.anchor) {
+
+	    var dir = osg.Vec3.sub(b1.pos, b1.parent.anchor, []);		
+	    var d = osg.Vec3.length(dir);
+	    if (d > CONF.boid_grap_dist * 3) {
+		return;
+	    }
+
+	    osg.Vec3.sub([ (b1.parent.pos[0] + b1.parent.anchor[0]) / 2 ,
+			   (b1.parent.pos[1] + b1.parent.anchor[1]) / 2 ,
+			   0, 0],
+			 b1.pos, b1.v);
+	    osg.Vec3.normalize(b1.v, b1.v);
+	    
+	    var p = osg.Vec3.normalize(osg.Vec3.sub(b1.pos, b1.parent.anchor, []), []);
+	    osg.Vec3.sub(b1.pos, osg.Vec3.mult(p, osg.Vec3.length(p)*dt, []), b1.pos);
+	    //b1.pos = b1.parent.anchor;
+	    return;
+	}
+
+	for(var j=space.boidsList.length-1; j >= 0 ; j--) {
+	    var b2 = space.boidsList[j];
+	    if (b1.id === b2.id) {
+		continue;
+	    }
+	    
+	    if (b1.parent === undefined && b2.anchor !== undefined && b2.child === undefined) {
+		if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) {
+		    b1.locked = true;
+		    b1.parent = b2;
+		    b2.child = b1;
+		    b1.speed = b2.speed;
+		    osg.log("LOCKED!");
+		    return;
+		}
+	    }
+
+	    var dir = osg.Vec3.sub(b1.pos, b2.pos, []);		
+	    var d = osg.Vec3.length(dir);
+	    
+	    if (d > CONF.boid_range) {
+		continue;
+	    }
+	    
+	    var dir_n = osg.Vec3.normalize(dir, []);
+	    
+	    var dot = osg.Vec3.dot(dir_n, b1.v);
+	    
+	    if (b1.id === 0) {
+		//		    osg.log(dot);
+	    }
+	    
+	    // separation 
+	    osg.Vec3.sub(sep, osg.Vec3.mult(dir_n, d, []),  sep);
+	    
+	    // alignement 
+	    osg.Vec3.add(align, b2.v, align);
+	    
+	    // cohesion
+	    osg.Vec3.sub(cohesion, osg.Vec3.sub(b1.v, b2.v, []), cohesion);
+	    
+	}
+	// separation
+	osg.Vec3.sub(b1.v, 
+		     osg.Vec3.mult(sep, CONF.boid_sep, []), 
+		     b1.v);
+	
+	// alignement
+	osg.Vec3.add(b1.v,
+		     osg.Vec3.mult(osg.Vec3.normalize(align, align), CONF.boid_align, []),
+		     b1.v);
+	
+	// cohesion
+	osg.Vec3.add(b1.v,
+		     osg.Vec3.mult(cohesion, CONF.boid_cohesion, []),
+		     b1.v);
+	
+	osg.Vec3.normalize(b1.v, b1.v);
+    };
+    
+    boid.step = function(dt, space) {
+	var b = boid;
+	b.v[2] = 0.0;
+	osg.Vec3.normalize(b.v, b.v);
+        var v = osg.Vec3.mult(b.v, dt*b.speed, []);
+        osg.Vec3.add(b.pos, v, b.pos);
+	
+	// X boundary
+	if (b.pos[0] > space.width) {
+	    b.pos[0] -= space.width;
+	} else if (b.pos[0] < 0) {
+	    b.pos[0] += space.width;
+	}
+	
+	// Y boundary
+	if (b.pos[1] > space.height) {
+	    b.pos[1] -= space.height;
+	} else if (b.pos[1] < 0) {
+	    b.pos[1] += space.height;
+	}
+	
+	b.pos[2] = 0.0;
+
+	if (b.locked) {
+	    b.anchor = [];
+	    osg.Vec3.add(b.pos, osg.Vec3.mult(b.v, CONF.boid_anchor_dist, []), b.anchor);
+	} else {
+	    b.anchor = undefined;
+	}
+
+        b.geom.updatePosition(b.pos, b.v);
+    };
+    
     osg.Vec3.normalize(boid.v, boid.v);
+    return boid;
+}
+
+function newPlayer(id, x, y, u, v) {
+    var boid = newBoid(id, x, y, u, v);
+    boid.speed = CONF.player_speed;
+    boid.vTo = [ boid.v[0], boid.v[1], boid.v[2] ];
+    boid.locked = true;
+    boid.player = true;
+    boid.update = function(dt, space) {
+	
+	var b1 = boid;
+	if (b1.child !== undefined) {
+	    for(var j=space.boidsList.length-1; j >= 0 ; j--) {
+		var b2 = space.boidsList[j];
+		if (b1.id === b2.id) {
+		    continue;
+		}
+		
+		if (b2.anchor !== undefined && b2.child === undefined && b1.child !== b2) {
+		    if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) {
+
+			b1.child.parent = b2;
+			b2.child = b1.child;
+
+			delete b1.child;
+
+			osg.log("LOCKED!");
+			return;
+		    }
+		}
+	    }
+	}
+
+	space.ctrl[2] /= 1 + (dt*2);
+	//boid.speed = CONF.player_speed + (space.ctrl[2]/5);
+
+	//var v = osg.Vec3.sub(boid.v, boid.vTo, []);
+	var ctrl = -space.ctrl[0] + space.ctrl[1];
+	//osg.log(ctrl);
+	if(ctrl === 0 ) {
+	    return;
+	}
+	var v = osg.Vec3.cross(boid.v, [0,0,1], []);
+
+	osg.Vec3.mult(v, ctrl, v);
+
+	osg.Vec3.add(boid.v, osg.Vec3.mult(v, dt*CONF.player_rot, []), boid.v);
+	osg.Vec3.normalize(boid.v, boid.v);
+
+    };
     return boid;
 }
 
@@ -31,11 +208,18 @@ function newSpace() {
 	width: W,
 	height: H,
 	boidsList: [],
-	boidsMap: {}
+	boidsMap: {},
+	ctrl: [0, 0, 0]
     };
-
+    
     space.newRandomBoid = function() {
-	var boid = newBoid(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random());
+	var boid;
+	if (id === 0) {
+	    boid = newPlayer(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random());
+	    space.player1 = boid;
+	} else {
+	    boid = newBoid(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random());
+	}
 	space.boidsList.push(boid);
 	space.boidsMap[boid.id] = boid;
 	return boid;
@@ -45,80 +229,11 @@ function newSpace() {
 	var i;
 
 	for(i=space.boidsList.length-1; i >= 0; i--) {
-	    var b1= space.boidsList[i];
-	    var sep = [0,0,0];
-	    var align = [0,0,0];
-	    var cohesion = [0,0,0];
-
-	    for(j=space.boidsList.length-1; j >= 0 ; j--) {
-		var b2 = space.boidsList[j];
-		if (b1.id === b2.id) {
-		    continue;
-		}
-		
-		var dir = osg.Vec3.sub(b1.pos, b2.pos, []);		
-		var d = osg.Vec3.length(dir);
-		
-		if (d > CONF.boid_range) {
-		    continue;
-		}
-		
-		var dir_n = osg.Vec3.normalize(dir, []);
-		
-		var dot = osg.Vec3.dot(dir_n, b1.v);
-
-		if (b1.id === 0) {
-		    //		    osg.log(dot);
-		}
-		
-		// separation 
-		osg.Vec3.sub(sep, osg.Vec3.mult(dir_n, d, []),  sep);
-		
-		// alignement 
-		osg.Vec3.add(align, b2.v, align);
-
-		// cohesion
-		osg.Vec3.sub(cohesion, osg.Vec3.sub(b1.v, b2.v, []), cohesion);
-
-	    }
-	    // separation
-	    osg.Vec3.sub(b1.v, 
-			 osg.Vec3.mult(sep, CONF.boid_sep, []), 
-			 b1.v);
-	    
-	    // alignement
-	    osg.Vec3.add(b1.v,
-			 osg.Vec3.mult(osg.Vec3.normalize(align, align), CONF.boid_align, []),
-			 b1.v);
-	    
-	    // cohesion
-	    osg.Vec3.add(b1.v,
-			 osg.Vec3.mult(cohesion, CONF.boid_cohesion, []),
-			 b1.v);
-
-	    osg.Vec3.normalize(b1.v, b1.v);
+	    space.boidsList[i].update(dt, space);
 	}	
 	
 	for(i=space.boidsList.length-1; i >= 0; i--) {
-            var b = space.boidsList[i];
-            var v = osg.Vec3.mult(b.v, dt*b.speed, []);
-            osg.Vec3.add(b.pos, v, b.pos);
-	    
-	    // X boundary
-	    if (b.pos[0] > space.width) {
-		b.pos[0] -= space.width;
-	    } else if (b.pos[0] < 0) {
-		b.pos[0] += space.width;
-	    }
-	    
-	    // Y boundary
-	    if (b.pos[1] > space.height) {
-		b.pos[1] -= space.height;
-	    } else if (b.pos[1] < 0) {
-		b.pos[1] += space.height;
-	    }
-	    
-            b.geom.updatePosition(b.pos, b.v);
+            space.boidsList[i].step(dt, space);
         }
 	
     };
@@ -126,6 +241,7 @@ function newSpace() {
     for(var i=0; i < CONF.boid_nbr; i++) {
 	space.newRandomBoid();
     }
+        
     return space;
 }
 
@@ -136,11 +252,34 @@ var MainUpdate = function() {
 };
 
 MainUpdate.prototype = {
-
-    playerInput: function(event) {
-	// Player inputs go there...
+    
+    playerInput: function(point) {
+	//osg.Vec3.normalize(osg.Vec3.sub(this._space.player1.pos, point, []), this._space.player1.vTo);
     },
     
+    
+    playerInputUp: function(event) {
+	//osg.log(event);
+	if (event.keyCode === 39) {
+	    this._space.ctrl[1] = 0;
+	    this._space.ctrl[2]++;
+	} else if (event.keyCode === 37) {
+	    this._space.ctrl[0] = 0;
+	    this._space.ctrl[2]++;
+	}
+    },
+    
+    playerInputDown: function(event) {
+	//osg.log(event);
+	if (event.keyCode === 39) {
+	    this._space.ctrl[1] = 1;
+	    this._space.ctrl[2]++; 
+	} else if (event.keyCode === 37) {
+	    this._space.ctrl[0] = 1;
+	    this._space.ctrl[2]++;
+	}
+    },
+
     update: function(node, nv) {
         var t = nv.getFrameStamp().getSimulationTime();
         if (this._lastUpdate === undefined) {
@@ -149,7 +288,6 @@ MainUpdate.prototype = {
         var dt = t - this._lastUpdate;
 
         this._lastUpdate = t;
-
 	this._space.update(dt);
         
         return true;
