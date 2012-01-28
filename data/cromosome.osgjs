@@ -84,10 +84,10 @@
                 },
                 {
                   "osg.Geometry": {
-                    "Name": "_8_-_Default_1", 
+                    "Name": "eye", 
                     "StateSet": {
                       "osg.StateSet": {
-                        "Name": "_8_-_Default", 
+                        "Name": "eye", 
                         "AttributeList": [ {
                           "osg.Material": {
                             "Ambient": [ 1, 1, 1, 1], 
@@ -95,14 +95,6 @@
                             "Emission": [ 0, 0, 0, 1], 
                             "Shininess": 10, 
                             "Specular": [ 0.9, 0.9, 0.9, 1]
-                          }
-                        },
-                        {
-                          "osg.BlendFunc": {
-                            "DestinationAlpha": "ONE_MINUS_SRC_ALPHA", 
-                            "DestinationRGB": "ONE_MINUS_SRC_ALPHA", 
-                            "SourceAlpha": "SRC_ALPHA", 
-                            "SourceRGB": "SRC_ALPHA"
                           }
                         } ], 
                         "TextureAttributeList": [ [  ],
