@@ -1,4 +1,4 @@
-// osg-debug-0.0.7.js commit c834d881f9c2ecb7cd3a7cb236f7ae30ddc14392 - http://github.com/cedricpinson/osgjs
+// osg-debug-0.0.7.js commit 441b6ca43bbf3686aeace2f888796b2c3c9e0ba4 - http://github.com/cedricpinson/osgjs
 /** -*- compile-command: "jslint-cli osg.js" -*- */
 var osg = {};
 
@@ -9020,15 +9020,12 @@ osgUtil.IntersectVisitor.prototype = osg.objectInehrit(osg.NodeVisitor.prototype
         if (this.enterNode(node) === false) {
             return;
         }
-        this.nodePath.push(node);
 
         if (node.getViewMatrix) { // Camera/View
             this.applyCamera(node);
         } else {
             this.applyNode(node);
         }
-
-        this.nodePath.pop();
     },
 
     enterNode: function(node) {
