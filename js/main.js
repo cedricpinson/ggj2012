@@ -20,6 +20,7 @@ var main = function() {
         rotate.addChild(createScene());
         viewer.getCamera().setClearColor([0.0, 0.0, 0.0, 0.0]);
         viewer.setSceneData(rotate);
+    if (true) {
         viewer.setupManipulator();
         viewer.getManipulator().computeHomePosition();
         viewer.getManipulator().setTarget([CONF.space_width*0.5,CONF.space_height*0.5,0]);
@@ -73,7 +74,7 @@ var main = function() {
         };
         viewer.getManipulator().mouseup = mouseup;
 
-        
+    }
 
         viewer.run();
 
@@ -104,10 +105,10 @@ var createScene = function () {
     mainUpdate = new MainUpdate();
     root.addUpdateCallback(mainUpdate);
     
-    $('#3DView').keyup(function(event) {
+    $('body').keyup(function(event) {
 	mainUpdate.playerInputUp(event);
     });
-    $('#3DView').keydown(function(event) {
+    $('body').keydown(function(event) {
 	mainUpdate.playerInputDown(event)
     });
     
