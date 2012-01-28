@@ -231,6 +231,8 @@ var getRandomModel = function(color) {
         if (color === "black") {
             material.setDiffuse([0,0,0,1]);
         } else if (color === "white") {
+            material.setEmission([0.4,0.4,0.4,1]);
+            material.setAmbient([0.4,0.4,0.4,1]);
             material.setDiffuse([1,1,1,1]);
         }
         
