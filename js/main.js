@@ -97,6 +97,17 @@ var createScene = function () {
     var plane = osg.createTexturedQuadGeometry(0,0,0,
                                                CONF.space_width,0,0,
                                                0,CONF.space_height,0);
+
+    var texture = new osg.Texture();
+    texture.setImage(osgDB.readImage('data/bg.png'));
+    var m = new osg.Material();
+    m.setEmission([1,1,1,1]);
+    m.setAmbient([0,0,0,1]);
+    m.setDiffuse([0,0,0,1]);
+    m.setSpecular([0,0,0,1]);
+    plane.getOrCreateStateSet().setTextureAttributeAndMode(0, texture);
+    plane.getOrCreateStateSet().setAttributeAndMode(m);
+
     plane.setNodeMask(2);
     root.addChild(plane);
     plane.setName("plane");
@@ -109,7 +120,7 @@ var createScene = function () {
 	mainUpdate.playerInputUp(event);
     });
     $('body').keydown(function(event) {
-	mainUpdate.playerInputDown(event)
+	mainUpdate.playerInputDown(event);
     });
 
     // Audio
