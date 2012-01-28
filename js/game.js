@@ -45,23 +45,37 @@ function newBoid(id, x, y, u, v) {
 
             // wrap mode
             if (d > CONF.boid_grap_dist * 3) {
-                if (dir[0] > 3*CONF.boid_grap_dist) {
-                    parentPosition[0] += CONF.space_width;
-                    parentAnchor[0] += CONF.space_width;
-                } else if (dir[0] < -3*CONF.boid_grap_dist) {
-                    childPosition [ 0 ] += CONF.space_width;
-                }
-
-                if (dir[1] > 3*CONF.boid_grap_dist) {
-                    parentPosition [ 1 ] += CONF.space_height;
-                    parentAnchor[1] += CONF.space_height;
-                } else if (dir[1] < -3*CONF.boid_grap_dist) {
-                    childPosition [ 1 ] += CONF.space_height;
-                }
-            }
-
-            //osg.log(adjustedParentAnchor);
-            //osg.log(b1.parent.anchor);
+		//b1.timer += dt;
+		//if (b1.timer < 5.0) {
+                    if (dir[0] > 3*CONF.boid_grap_dist) {
+			parentPosition[0] += CONF.space_width;
+			parentAnchor[0] += CONF.space_width;
+                    } else if (dir[0] < -3*CONF.boid_grap_dist) {
+			childPosition [ 0 ] += CONF.space_width;
+                    }
+		    
+                    if (dir[1] > 3*CONF.boid_grap_dist) {
+			parentPosition [ 1 ] += CONF.space_height;
+			parentAnchor[1] += CONF.space_height;
+                    } else if (dir[1] < -3*CONF.boid_grap_dist) {
+			childPosition [ 1 ] += CONF.space_height;
+                    }
+	    /*} else { 
+		    var bb = b1;
+		    delete bb.parent.child;
+		    while(bb) {
+			var child = bb.child;
+			bb.speed = CONF.boid_speed;
+			delete bb.parent;
+			delete bb.locked;
+			delete bb.child;
+			bb = child;
+		    }
+		    return;
+		    }*/
+            } /*else {
+		b1.timer = 0.0;
+	    }*/
 
             var childDirection = [];
 
@@ -69,16 +83,12 @@ function newBoid(id, x, y, u, v) {
                            (parentPosition[1] + parentAnchor[1]) / 2 ,
                            0, 0], childPosition, childDirection);
 
-            // osg.Vec3.sub([ (b1.parent.pos[0] + b1.parent.anchor[0]) / 2 ,
-            //                (b1.parent.pos[1] + b1.parent.anchor[1]) / 2 ,
-            //                0, 0],
-            //              b1.pos, b1.v);
             osg.Vec3.normalize(childDirection, b1.v);
             
             var p = osg.Vec3.normalize(osg.Vec3.sub(childPosition, parentAnchor, []), []);
 
             osg.Vec3.sub(childPosition, osg.Vec3.mult(p, osg.Vec3.length(p)*dt, []), b1.pos);
-            //b1.pos = b1.parent.anchor;
+
             return;
         }
 
@@ -94,6 +104,12 @@ function newBoid(id, x, y, u, v) {
                     b1.parent = b2;
                     b2.child = b1;
                     b1.speed = b2.speed;
+
+		    for(var bb=b1, count=0; bb !== undefined; count++) {
+			bb.count = count;
+			bb = bb.parent;
+		    }
+		    
                     osg.log("LOCKED!");
                     return;
                 }
