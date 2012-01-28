@@ -9,11 +9,12 @@ var CONF = {
     boid_align: 0.0, // 0.00125,
     boid_cohesion: 0.0, //0.025
     boid_anchor_dist: -1.5,
-    boid_grap_dist: 1,
+    boid_grap_dist: 1.5,
 
     player_rot: 5.0,
     player_speed: 6.0,
-    key_step: 1
+    key_step: 1,
+    min_chain: 3
 };
 
 function newBoid(id, x, y, u, v) {
@@ -34,6 +35,7 @@ function newBoid(id, x, y, u, v) {
 	
 	if (b1.parent !== undefined && b1.parent.anchor) {
 
+	    
 	    var dir = osg.Vec3.sub(b1.pos, b1.parent.anchor, []);		
 	    var d = osg.Vec3.length(dir);
 	    if (d > CONF.boid_grap_dist * 3) {
@@ -64,7 +66,12 @@ function newBoid(id, x, y, u, v) {
 		    b1.parent = b2;
 		    b2.child = b1;
 		    b1.speed = b2.speed;
-		    osg.log("LOCKED!");
+
+		    for(var bb=b1, count=0; bb !== undefined; count++) {
+			bb.count = count;
+			bb = bb.parent;
+		    }
+		    osg.log(space.player1.count);
 		    return;
 		}
 	    }
@@ -165,7 +172,7 @@ function newPlayer(id, x, y, u, v) {
 		    continue;
 		}
 		
-		if (b2.anchor !== undefined && b2.child === undefined && b1.child !== b2) {
+		if (b2.anchor !== undefined && b2.child === undefined && b1.child !== b2 && b1.count > CONF.min_chain) {
 		    if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) {
 
 			b1.child.parent = b2;
