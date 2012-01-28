@@ -2,7 +2,11 @@ var loadModel = function(url) {
     if (loadModel.models[url] === undefined) {
 
         var model = new osg.MatrixTransform();
-        model.setMatrix(osg.Matrix.makeRotate(Math.PI, 1.0, 0.0, 0.0, []));
+        var s = 2.0;
+        var matrix = osg.Matrix.makeScale(s,s,s, []);
+        osg.Matrix.postMult(osg.Matrix.makeRotate(Math.PI*0.5, 1.0, 0.0, 0.0, []),matrix);
+        osg.Matrix.postMult(osg.Matrix.makeRotate(Math.PI, 0.0, 1.0, 0.0, []),matrix);
+        model.setMatrix(matrix);
 
         jQuery.getJSON(url, function(data) {
             var m = osgDB.parseSceneGraph(data);
@@ -19,6 +23,7 @@ loadModel.models = {};
 
 var getRandomModel = function() {
     if (getRandomModel.loaded === undefined) {
+        loadModel("data/stop.osgjs");
         loadModel("data/arbre.osgjs");
         loadModel("data/bilboquet.osgjs");
         loadModel("data/bite.osgjs");

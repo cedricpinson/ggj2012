@@ -28,7 +28,7 @@
         {
           "osg.MatrixTransform": {
             "Name": "Bo_te03", 
-            "Matrix": [ 1.17415, 0, 0, 0, 0, 1.17415, 0, 0, 0, 0, 1.17415, 0, 0, 0, 0, 1 ], 
+            "Matrix": [ 1.17415, 0, 0, 0, 0, 1.17415, 0, 0, 0, 0, 1.17415, 0, 0, -0.184013, 0, 1 ], 
             "Children": [ {
               "osg.Node": {
                 "Children": [ {
@@ -39,8 +39,8 @@
                         "Name": "_1_-_Default", 
                         "AttributeList": [ {
                           "osg.Material": {
-                            "Ambient": [ 0, 0, 0, 1], 
-                            "Diffuse": [ 0, 0, 0, 1], 
+                            "Ambient": [ 1, 1, 1, 1], 
+                            "Diffuse": [ 1, 1, 1, 1], 
                             "Emission": [ 0, 0, 0, 1], 
                             "Shininess": 10, 
                             "Specular": [ 0.9, 0.9, 0.9, 1]
