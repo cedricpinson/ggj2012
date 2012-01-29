@@ -84,6 +84,8 @@ var main = function() {
 		    count -= (count-(PlayerMe.count+1||1))/FACTOR;
 		}
 
+		count = Math.min(count, 10);
+
                 if (eye === undefined) {
 		    eye = [];
                     eye[0] = pos[0] - (20*PlayerMe.v[0]);

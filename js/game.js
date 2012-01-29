@@ -14,7 +14,7 @@ var CONF = {
     player_rot_max: 5.0,
     player_speed: 6.0,
     key_step: 1,
-    min_chain: 3,
+    min_chain: 4,
     chain_timer: 1.0,
 
     white_kill_d: 1.0,
@@ -28,13 +28,12 @@ var CONF = {
 
 var levels = {
     "Level 1" : { 1: 0,
-		  2: 10 },
+		  2: 75 },
     "Level 2" : { 1: 0,
-		  2: 20 },
+		  2: 75 },
     "Level 3" : { 1: 0,
-		  2: 45 },
-    "Level 4" : { 1: 0,
-		  2: 75 }
+		  2: 75 },
+
 };
 
 var mn_lst = [
@@ -211,7 +210,6 @@ function newBoid(id, x, y, u, v, color, url) {
 
             osg.Vec3.sub(childPosition, osg.Vec3.mult(p, osg.Vec3.length(p)*dt, []), b1.pos);
 
-            return;
         }
 
         for(var j=space.boidsList.length-1; j >= 0 ; j--) {
@@ -220,17 +218,43 @@ function newBoid(id, x, y, u, v, color, url) {
                 continue;
             }
             	    
-            if (b1.color === CONF.BLACK && b1.locked !== true && b1.parent === undefined && b2.anchor !== undefined && b2.child === undefined) {
+            if (b1.color === CONF.BLACK && b2.anchor !== undefined && b2.child === undefined ) {
                 if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) {
+		    var b3 = b2.parent;
+		    var quit = false;
+		    while(b3) {
+			if (b1 === b3) {
+			    quit = true;
+			}
+			b3 = b3.parent;
+		    }
+		    if (quit) {
+			continue;
+		    }
+
                     b1.locked = true;
+		    if (b1.parent) {
+			delete b1.parent.child;
+		    }
                     b1.parent = b2;
+		    if (b2.child) {
+			delete b2.child.parent;
+		    }
                     b2.child = b1;
                     b1.speed = b2.speed;
 
-		    for(var bb=b1, count=0; bb !== undefined; count++) {
+		    var bb = b1;
+		    while(bb.child) {
+			bb = bb.child;
+			if (bb === b1) {
+			    break;
+			}
+		    }
+		    var bstart = bb;
+		    for(count=0; bb !== undefined; count++) {
 			bb.count = count;
 			bb = bb.parent;
-			if (bb === b1) {
+			if (bb === bstart) {
 			    break;
 			}
 		    }
@@ -245,6 +269,10 @@ function newBoid(id, x, y, u, v, color, url) {
                     return;
                 }
             }
+
+	    if (b1.parent) {
+		continue;
+	    }
 
             var dir = osg.Vec3.sub(b1.pos, b2.pos, []);         
             var d = osg.Vec3.length(dir);
@@ -426,58 +454,6 @@ function newPlayer(id, x, y, u, v) {
         return whitetokill;
     };
 
-    var getPlayerLoopChain = function() {
-        
-        var getTail = function(boid) {
-            var tail = boid;
-            while (tail.child !== undefined) {
-                tail = tail.child;
-            }
-            return tail;
-        };
-
-        var attached = false;
-        for (var i = 0, l = chains.length; i < l; i++) {
-            var tail = getTail(boid);
-            var chain = chains[i];
-
-            var start = chain;
-            var nb = 1;
-            var center = [ start.pos[0], start.pos[1], start.pos[2] ];
-            var next = start.child;
-            while (next !== start && next !== undefined) {
-                center[0] += next.pos[0];
-                center[1] += next.pos[1];
-                center[2] += next.pos[2];
-                nb += 1;
-                next = next.child;
-            }
-            
-            center[0] /= nb;
-            center[1] /= nb;
-            center[2] /= nb;
-
-            var dir = [];
-            osg.Vec3.sub(center, tail.pos, dir);
-            if (osg.Vec3.length(dir) < 2) {
-	        start.locked = true;
-	        delete start.parent.anchor;
-                delete start.parent.child;
-                start.parent = tail;
-                tail.child = start;
-	        tail.locked = true;
-                start.speed = tail.speed;
-                attached = true;
-                break;
-            }
-        }
-        if (attached) {
-            chains.splice(i,1);
-        }
-        return attached;
-    };
-    boid.getPlayerLoopChain = getPlayerLoopChain;
-
     boid.update = function(dt, space, t) {
 	
 	var b1 = boid;
@@ -531,12 +507,6 @@ function newPlayer(id, x, y, u, v) {
 		}
 	    }
 
-            if (boid.getPlayerLoopChain()) {
-                return;
-            }
-
-
-	    
 	    if (b1.child && b2.anchor !== undefined && b2.child === undefined && b1.child !== b2 && b1.count > CONF.min_chain) {
 		if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) { // MAKE CHAIN
 		    
@@ -551,11 +521,13 @@ function newPlayer(id, x, y, u, v) {
 
 		    //var count = Math.min(b2.count, 10);
 		    
-		    for(var i = 0; i < b2.count; i++) {
-			space.newRandomBoid(CONF.WHITE);
-		    }
-
 		    delete b1.child;
+
+		    b1.locked = false;
+		    setTimeout(function() {
+			b1.locked = true;
+		    }, 1000);
+
 		    var audio = $('#Ahhh').get(0);   
 		    audio.currentTime = 0;
 		    audio.play();
@@ -564,7 +536,20 @@ function newPlayer(id, x, y, u, v) {
                     if (whiteElements.length > 0) {
                         osg.log("New chain with white elements");
                         osg.log(whiteElements);
-                    }
+			
+			var bb;
+			while((bb = whiteElements.shift())) {
+			    if (bb) {
+				bb.geom.kill();
+			    }
+			}
+			
+                    } else {
+			for(var i = 0; i < CONF.white_spawn; i++) {
+			    space.newRandomBoid(CONF.WHITE);
+			}
+		    }
+
 		    return;
 		}
 	    }
@@ -672,6 +657,24 @@ MainUpdate.prototype = {
 	}
 
 	space.newRandomBoid(CONF.BLACK); // PLAYER
+	
+	switch(id) {
+	case "Level 1":
+	    CONF.white_spawn = 1;
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    break;
+	case "Level 2":
+	    CONF.white_spawn = 2;
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    break;
+	case "Level 3":
+	    CONF.white_spawn = 3;
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    break;	    
+	}
 	
 	genBoids(CONF.BLACK);
 	setTimeout(function() {
