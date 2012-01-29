@@ -1,0 +1,132 @@
+{
+  "Generator": "OpenSceneGraph 3.1.0", 
+  "Version": 2, 
+  "osg.Node": {
+    "Children": [ {
+      "osg.Node": {
+        "Name": "Collada visual scene group", 
+        "Children": [ {
+          "osg.LightSource": {
+            "Name": "EnvironmentAmbientLight", 
+            "Light": {
+              "osg.Light": {
+                "Ambient": [ 0, 0, 0, 1], 
+                "ConstantAttenuation": 1, 
+                "Diffuse": [ 0, 0, 0, 0], 
+                "Direction": [ 0, 0, -1], 
+                "LightNum": 0, 
+                "LinearAttenuation": 0, 
+                "Position": [ 0, 0, 0, 0], 
+                "QuadraticAttenuation": 0, 
+                "Specular": [ 0, 0, 0, 0], 
+                "SpotCutoff": 180, 
+                "SpotExponent": 0
+              }
+            }
+          }
+        },
+        {
+          "osg.Node": {
+            "Children": [ {
+              "osg.Geometry": {
+                "Name": "Mat_riau__69_1", 
+                "StateSet": {
+                  "osg.StateSet": {
+                    "Name": "Mat_riau__69", 
+                    "AttributeList": [ {
+                      "osg.Material": {
+                        "Ambient": [ 0.588, 0.588, 0.588, 1], 
+                        "Diffuse": [ 0.588, 0.588, 0.588, 1], 
+                        "Emission": [ 0, 0, 0, 1], 
+                        "Shininess": 10, 
+                        "Specular": [ 0.9, 0.9, 0.9, 1]
+                      }
+                    } ]
+                  }
+                }, 
+                "PrimitiveSetList": [ {
+                  "DrawElementsUShort": {
+                    "Indices": {
+                      "Elements": [ 2, 3, 0, 1 ], 
+                      "ItemSize": 1, 
+                      "Type": "ELEMENT_ARRAY_BUFFER"
+                    }, 
+                    "Mode": "TRIANGLE_STRIP"
+                  }
+                } ], 
+                "VertexAttributeList": {
+                  "Normal": {
+                    "Elements": [ 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 ], 
+                    "ItemSize": 3, 
+                    "Type": "ARRAY_BUFFER"
+                  }, 
+                  "Vertex": {
+                    "Elements": [ -27.5, -27.5, 16.5, 27.5, -27.5, 16.5, -27.5, 27.5, 16.5, 27.5, 27.5, 16.5 ], 
+                    "ItemSize": 3, 
+                    "Type": "ARRAY_BUFFER"
+                  }
+                }
+              }
+            },
+            {
+              "osg.Geometry": {
+                "Name": "skybox", 
+                "StateSet": {
+                  "osg.StateSet": {
+                    "Name": "skybox", 
+                    "AttributeList": [ {
+                      "osg.Material": {
+                        "Ambient": [ 1, 1, 1, 1], 
+                        "Diffuse": [ 1, 1, 1, 1], 
+                        "Emission": [ 0, 0, 0, 1], 
+                        "Shininess": 10, 
+                        "Specular": [ 0.9, 0.9, 0.9, 1]
+                      }
+                    } ], 
+                    "TextureAttributeList": [ [  ],
+                    [ {
+                      "osg.Texture": {
+                        "File": "skybox.png", 
+                        "MagFilter": "LINEAR", 
+                        "MinFilter": "LINEAR_MIPMAP_LINEAR", 
+                        "WrapS": "REPEAT", 
+                        "WrapT": "REPEAT"
+                      }
+                    } ] ]
+                  }
+                }, 
+                "PrimitiveSetList": [ {
+                  "DrawElementsUShort": {
+                    "Indices": {
+                      "Elements": [ 8, 10, 0, 2, 2, 6, 6, 3, 14, 11, 11, 13, 13, 9, 5, 1, 1, 15, 15, 12, 7, 4 ], 
+                      "ItemSize": 1, 
+                      "Type": "ELEMENT_ARRAY_BUFFER"
+                    }, 
+                    "Mode": "TRIANGLE_STRIP"
+                  }
+                } ], 
+                "VertexAttributeList": {
+                  "Normal": {
+                    "Elements": [ 0, 1, 0, 1, 0, 0, 0, 1, 0, -1, 0, 0, 0, -1, 0, 1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, -1, 0, 0, 0, -1, 0, 1, 0, 0, -1, 0, 0, 0, -1, 0 ], 
+                    "ItemSize": 3, 
+                    "Type": "ARRAY_BUFFER"
+                  }, 
+                  "TexCoord1": {
+                    "Elements": [ 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0 ], 
+                    "ItemSize": 3, 
+                    "Type": "ARRAY_BUFFER"
+                  }, 
+                  "Vertex": {
+                    "Elements": [ -27.5, -27.5, -16.5, -27.5, -27.5, -16.5, 27.5, -27.5, -16.5, 27.5, -27.5, -16.5, -27.5, 27.5, -16.5, -27.5, 27.5, -16.5, 27.5, 27.5, -16.5, 27.5, 27.5, -16.5, -27.5, -27.5, 16.5, -27.5, -27.5, 16.5, 27.5, -27.5, 16.5, 27.5, -27.5, 16.5, -27.5, 27.5, 16.5, -27.5, 27.5, 16.5, 27.5, 27.5, 16.5, 27.5, 27.5, 16.5 ], 
+                    "ItemSize": 3, 
+                    "Type": "ARRAY_BUFFER"
+                  }
+                }
+              }
+            } ]
+          }
+        } ]
+      }
+    } ]
+  }
+}
