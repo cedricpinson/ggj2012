@@ -143,6 +143,20 @@ var BoidLevel = {
     "data/tulip.osgjs": 11
 };
 
+function computeMaxLink(player) {
+    var counter = 0;
+    var next = player.child;
+    while(next) {
+	next = next.child;
+        counter++;
+    }
+    if (counter > computeMaxLink.maxValue) {
+        osg.log("new record, you linked " + counter + " monster");
+        computeMaxLink.maxValue = counter;
+    }
+}
+computeMaxLink.maxValue = 0;
+
 function newBoid(id, x, y, u, v, color, url) {
     var col = color == CONF.WHITE ? "white" : "black";
     var g = new BoidGeometry(col, url);
@@ -264,6 +278,8 @@ function newBoid(id, x, y, u, v, color, url) {
 		    var audio = $(snd).get(0);
 		    audio.currentTime = 0;
 		    audio.play();
+
+                    computeMaxLink(space.player1);
 
                     return;
                 }
