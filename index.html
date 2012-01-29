@@ -22,6 +22,14 @@
   #ViewContainer {
   position: absolute;
   }
+
+  #Menu {
+    position: absolute;
+    top: 10;
+    left: 10;
+    z-index: 100;
+  }
+
 </style>
 
 <title>Flocky</title>
@@ -35,6 +43,13 @@
 </head>
 
 <body>
+  <ul id="Menu">
+    <li><a href="#" onClick="mainUpdate.initLevel('Level 1');">Level 1</a></li>
+    <li><a href="#" onClick="mainUpdate.initLevel('Level 2');">Level 2</a></li>
+    <li><a href="#" onClick="mainUpdate.initLevel('Level 3');">Level 3</a></li>
+    <li><a href="#" onClick="mainUpdate.initLevel('Level 4');">Level 4</a></li>
+  </ul>
+
   <div id="ViewContainer">
   <canvas id="3DView"></canvas>
   </div>

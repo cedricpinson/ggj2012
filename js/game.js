@@ -25,6 +25,17 @@ var CONF = {
 		 2: 75 }
 };
 
+var levels = {
+    "Level 1" : { 1: 0,
+		  2: 10 },
+    "Level 2" : { 1: 1,
+		  2: 20 },
+    "Level 3" : { 1: 5,
+		  2: 45 },
+    "Level 4" : { 1: 25,
+		  2: 75 }
+};
+
 var mn_lst = [
     "#MonstreNote01",
     "#MonstreNote02",
@@ -407,27 +418,8 @@ function newSpace() {
 	
     };
 
-    var produced = { 1: 0,
-		     2: 0 }
-    function genBoids(color) {
-	space.newRandomBoid(color);
-	produced[color]++;
-	if ( produced[color] < CONF.boids_nbr[color]) {
-	    setTimeout(function() {
-		genBoids(color);
-	    }, 2000*Math.random());
-	}
-    }
-    
-    genBoids(CONF.BLACK);
-    
-    setTimeout(function() {
-	genBoids(CONF.WHITE);
-    }, 10000);
-
     return space;
 }
-
 
 var MainUpdate = function() {
     this._lastUpdate = undefined;
@@ -440,6 +432,31 @@ MainUpdate.prototype = {
 	//osg.Vec3.normalize(osg.Vec3.sub(this._space.player1.pos, point, []), this._space.player1.vTo);
     },
     
+    initLevel: function(id) {
+	$("#Menu").hide("slow");
+
+	var space = this._space;
+	var produced = { 1: 0,
+			 2: 0 }
+	function genBoids(color) {
+	    if (levels[id][color] > 0) {
+		space.newRandomBoid(color);
+		produced[color]++;
+		if ( produced[color] < levels[id][color]) {
+		    setTimeout(function() {
+			genBoids(color);
+		    }, 2000*Math.random());
+		}
+	    }
+	}
+
+	space.newRandomBoid(CONF.BLACK); // PLAYER
+	
+	genBoids(CONF.BLACK);
+	setTimeout(function() {
+	    genBoids(CONF.WHITE);
+	}, 10000);
+    },
     
     playerInputUp: function(event) {
 	//osg.log(event);
