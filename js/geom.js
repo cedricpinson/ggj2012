@@ -212,7 +212,7 @@ var loadModel = function(url) {
 };
 loadModel.models = {};
 
-var getRandomModel = function(color) {
+var getRandomModel = function(color, url) {
     if (getRandomModel.loaded === undefined) {
 	loadModel("data/stop.osgjs");
         loadModel("data/arbre.osgjs");
@@ -232,12 +232,16 @@ var getRandomModel = function(color) {
     var index = Math.floor((Math.random() * keys.length));
     
     var selected;
-    if (color === "white") {
-	selected = "data/cromosome.osgjs";
+    if (url !== undefined) {
+	selected = url;
     } else {
-	selected = "data/tomb.osgjs";
+	if (color === "white") {
+	    selected = "data/cromosome.osgjs";
+	} else {
+	    selected = "data/tomb.osgjs";
+	}
     }
-    
+
     if (color !== undefined) {
         var material;
         material = new osg.Material();
@@ -270,7 +274,7 @@ var getMonsterDefault2 = function() {
     return model;
 };
 
-var BoidGeometry = function(color) {
+var BoidGeometry = function(color, url) {
     var mt = new osg.MatrixTransform();
     var model, cube;
     if (BoidGeometry.stateSet === undefined) {
@@ -303,7 +307,7 @@ var BoidGeometry = function(color) {
 	color = list[Math.floor(Math.random() * (list.length -0.00001))];
     }
 
-    var geom = getRandomModel(color); //BoidGeometry.model;
+    var geom = getRandomModel(color, url); //BoidGeometry.model;
     mt.addChild(geom);
     this.node = mt;
     RootScene.addChild(this.node);

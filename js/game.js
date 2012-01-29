@@ -106,12 +106,15 @@ function updateExplode(boid, dt, t) {
 
     if (boid.explode) {
         var myt = osgAnimation.EaseInQuad(Math.max(0.0,(boid.explodeTime-t)));
-        boid.pos[0] = boid.pos[0]+dt*20*myt*boid.explode[0];
-        boid.pos[1] = boid.pos[1]+dt*20*myt*boid.explode[1];
-        boid.pos[2] = boid.pos[2]+dt*myt*boid.explode[2];
-        if (boid.pos[2] < 0) {
-            boid.pos[2] = 0;
-        }
+        boid.pos[0] = boid.pos[0]+dt*30*myt*boid.explode[0];
+        boid.pos[1] = boid.pos[1]+dt*30*myt*boid.explode[1];
+        boid.pos[2] = boid.pos[2]; //+dt*20*myt*boid.explode[2] - 9.81*dt;
+
+        //myt = osgAnimation.EaseOutQuad(Math.max(0.0,(boid.explodeTime-t)));
+        boid.v[0] = boid.srcdir[0] + (1.0-myt)*(boid.newdir[0]-boid.srcdir[0]);
+        boid.v[1] = boid.srcdir[1] + (1.0-myt)*(boid.newdir[1]-boid.srcdir[1]);
+        boid.v[2] = 0.0;
+        osg.Vec3.normalize(boid.v, boid.v);
 
         if (t > boid.explodeTime ) {
             delete boid.explode;
@@ -123,9 +126,9 @@ function updateExplode(boid, dt, t) {
     return false;
 }
 
-function newBoid(id, x, y, u, v, color) {
+function newBoid(id, x, y, u, v, color, url) {
     var col = color == CONF.WHITE ? "white" : "black";
-    var g = new BoidGeometry(col);
+    var g = new BoidGeometry(col, url);
     var boid = {
 	id: id,
 	pos: [ x, y, 0 ],
@@ -331,7 +334,7 @@ boid.computeAnchorPosition = function(position, result) {
 }
 
 function newPlayer(id, x, y, u, v) {
-    var boid = newBoid(id, x, y, u, v, CONF.BLACK);
+    var boid = newBoid(id, x, y, u, v, CONF.BLACK, "data/bite.osgjs");
     boid.speed = CONF.player_speed;
     boid.vTo = [ boid.v[0], boid.v[1], boid.v[2] ];
     boid.locked = true;
@@ -343,6 +346,15 @@ function newPlayer(id, x, y, u, v) {
         diff[1] = boid.pos[1] - source[1];
         diff[2] = boid.pos[2] - (source[2]-1.0);
         boid.explode = diff;
+        boid.newdir = [];
+        boid.srcdir = [];
+
+        boid.srcdir[0] = boid.v[0];
+        boid.srcdir[1] = boid.v[1];
+        boid.srcdir[2] = 0;
+        boid.newdir[0] = diff[0];
+        boid.newdir[1] = diff[1];
+        boid.newdir[2] = 0;
     };
 
     boid.update = function(dt, space, t) {
@@ -400,6 +412,7 @@ function newPlayer(id, x, y, u, v) {
 		    b1.child.parent = b2;
 		    b2.child = b1.child;
 		    b2.count = b1.count;
+		    b1.count = 0;
 		    chains.unshift(b2);
 		    
 		    delete b1.child;
