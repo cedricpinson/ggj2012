@@ -668,6 +668,7 @@ function newSpace() {
     
     space.youWon = function() {
 	osg.log("YOU WON");
+	$("#Won").show("slow");
     };
     
     return space;
