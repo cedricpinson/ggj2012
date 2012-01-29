@@ -406,11 +406,11 @@ function newPlayer(id, x, y, u, v) {
 
         var maxDistSqr = 0;
         var dist = osg.Vec3.sub(center, start.pos, []);
-        maxDistSqr = Math.max(maxDistSqr, osg.vec3.lengthSqr(dist));
+        maxDistSqr = Math.max(maxDistSqr, osg.Vec3.length2(dist));
         nest = start.child;
         while (next !== start && next !== undefined) {
             osg.Vec3.sub(center, next.pos, dist);
-            maxDistSqr = Math.max(maxDistSqr, osg.vec3.lengthSqr(dist));
+            maxDistSqr = Math.max(maxDistSqr, osg.Vec3.length2(dist));
         }
 
         var whitetokill = [];
@@ -418,7 +418,7 @@ function newPlayer(id, x, y, u, v) {
         for (var i = 0, l = list.length; i < l; i++) {
             if (list[i].color === CONF.WHITE) {
                 osg.Vec3.sub(center, list[i].pos, dist);
-                if (osg.Vec3.lengthSqr(dist) < maxDistSqr) {
+                if (osg.Vec3.length2(dist) < maxDistSqr) {
                     whitetokill.push(list[i]);
                 }
             }
@@ -560,11 +560,11 @@ function newPlayer(id, x, y, u, v) {
 		    audio.currentTime = 0;
 		    audio.play();
 
-                    var whiteElements = isWhiteInsideChain(chain, space.boidList);
-                    osg.log("New chain with white elements");
-                    osg.log(whiteElements);
-
-		    
+                    var whiteElements = isWhiteInsideChain(b2, space.boidsList);
+                    if (whiteElements.length > 0) {
+                        osg.log("New chain with white elements");
+                        osg.log(whiteElements);
+                    }
 		    return;
 		}
 	    }

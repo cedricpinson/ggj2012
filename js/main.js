@@ -178,16 +178,17 @@ var createScene = function () {
     items.setNodeMask(1);
 
     var bg = new osg.Node();
-    
-    var plane = osg.createTexturedQuadGeometry(0,0,-0.01,
-                                               CONF.space_width,0,0,
-                                               0,CONF.space_height,0);
+
+    var size = CONF.space_width*1.5;
+    var plane = osg.createTexturedQuadGeometry(-size*0.5 + CONF.space_width/2, -CONF.space_height/2,-0.01,
+                                               size,0,0,
+                                               0,size,0);
 
     var texture = new osg.Texture();
     texture.setWrapS(osg.Texture.CLAMP_TO_EDGE);
     texture.setWrapT(osg.Texture.CLAMP_TO_EDGE);
     var depth = new osg.Depth();
-    //depth.setWriteMask(false);
+    depth.setWriteMask(false);
     bg.getOrCreateStateSet().setAttributeAndMode(depth);
 
     texture.setImage(osgDB.readImage('data/bg.png'));
@@ -200,7 +201,7 @@ var createScene = function () {
     plane.getOrCreateStateSet().setAttributeAndMode(m);
     plane.setNodeMask(2);
 
-    //bg.addChild(plane);
+    bg.addChild(plane);
     bg.addChild(createSkyBox());
     
     plane.setName("plane");
