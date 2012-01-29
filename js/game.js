@@ -387,7 +387,7 @@ function newPlayer(id, x, y, u, v) {
     };
 
 
-    var isWhiteInsideChain = function(chain) {
+    var isWhiteInsideChain = function(chain, list) {
         var start = chain;
         var nb = 1;
         var center = [ start.pos[0], start.pos[1], start.pos[2] ];
@@ -403,7 +403,27 @@ function newPlayer(id, x, y, u, v) {
         center[0] /= nb;
         center[1] /= nb;
         center[2] /= nb;
-        
+
+        var maxDistSqr = 0;
+        var dist = osg.Vec3.sub(center, start.pos, []);
+        maxDistSqr = Math.max(maxDistSqr, osg.vec3.lengthSqr(dist));
+        nest = start.child;
+        while (next !== start && next !== undefined) {
+            osg.Vec3.sub(center, next.pos, dist);
+            maxDistSqr = Math.max(maxDistSqr, osg.vec3.lengthSqr(dist));
+        }
+
+        var whitetokill = [];
+
+        for (var i = 0, l = list.length; i < l; i++) {
+            if (list[i].color === CONF.WHITE) {
+                osg.Vec3.sub(center, list[i].pos, dist);
+                if (osg.Vec3.lengthSqr(dist) < maxDistSqr) {
+                    whitetokill.push(list[i]);
+                }
+            }
+        }
+        return whitetokill;
     };
 
     var getPlayerLoopChain = function() {
@@ -439,7 +459,7 @@ function newPlayer(id, x, y, u, v) {
 
             var dir = [];
             osg.Vec3.sub(center, tail.pos, dir);
-            if (osg.Vec3.length(dir) < 1) {
+            if (osg.Vec3.length(dir) < 2) {
 	        start.locked = true;
 	        delete start.parent.anchor;
                 delete start.parent.child;
@@ -447,8 +467,12 @@ function newPlayer(id, x, y, u, v) {
                 tail.child = start;
 	        tail.locked = true;
                 start.speed = tail.speed;
-                attached = true;                
+                attached = true;
+                break;
             }
+        }
+        if (attached) {
+            chains.splice(i,1);
         }
         return attached;
     };
@@ -536,7 +560,7 @@ function newPlayer(id, x, y, u, v) {
 		    audio.currentTime = 0;
 		    audio.play();
 
-                    var whiteElements = isWhiteInsideChain(chain);
+                    var whiteElements = isWhiteInsideChain(chain, space.boidList);
                     osg.log("New chain with white elements");
                     osg.log(whiteElements);
 
