@@ -361,6 +361,7 @@ function newPlayer(id, x, y, u, v) {
 		    b1.child.parent = b2;
 		    b2.child = b1.child;
 		    b2.count = b1.count;
+		    b1.count = 0;
 		    chains.unshift(b2);
 		    
 		    delete b1.child;
