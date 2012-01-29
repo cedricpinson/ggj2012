@@ -276,7 +276,7 @@ function newBoid(id, x, y, u, v, color, url) {
 	b.v[2] = 0.0;
 
         if (updateExplode(boid, dt, t)) {
-            boid.geom.updatePosition(boid.pos, boid.v);
+            boid.geom.updatePosition(boid.pos, boid.v, -(t-boid.explodeTime) );
             return;
         }
 

@@ -314,7 +314,7 @@ var BoidGeometry = function(color, url) {
 };
 
 BoidGeometry.prototype = {
-    updatePosition: function(pos, vec) {
+    updatePosition: function(pos, vec, scale) {
         //osg.log(pos);
         this.node.dirtyBound();
         var target = [];
@@ -323,8 +323,18 @@ BoidGeometry.prototype = {
         target[2] = pos[2]+vec[2];
 
         var l = [];
+
+        var mscale = osg.Matrix.makeIdentity([]);
+        var s = 1.0;
+        if (scale !== undefined) {
+            s = osgAnimation.EaseOutElastic(1.0-scale);
+        }
+        osg.Matrix.makeScale(s,s,s, mscale);
+
         osg.Matrix.makeLookAt(pos, target,[0,0,1], l);
         osg.Matrix.inverse(l, this.node.getMatrix());
+
+        osg.Matrix.preMult(this.node.getMatrix(),mscale);
         //osg.Matrix.makeTranslate(pos[0], pos[1], pos[2], this.node.getMatrix());
     }
 };
