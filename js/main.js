@@ -1,5 +1,5 @@
 var mainUpdate;
-
+var Viewer;
 var main = function() {
     var canvas = document.getElementById("3DView");
     var w = window.innerWidth;
@@ -14,13 +14,17 @@ var main = function() {
 
     var viewer;
   //  try {
-        viewer = new osgViewer.Viewer(canvas, {antialias : true, alpha: true });
+    viewer = new osgViewer.Viewer(canvas, {antialias : true, alpha: true, premult: false });
         viewer.init();
+    Viewer = viewer;
         var rotate = new osg.MatrixTransform();
     var root = createScene();
         rotate.addChild(root);
         viewer.getCamera().setClearColor([0.0, 0.0, 0.0, 0.0]);
-        viewer.setSceneData(rotate);
+    osg.Matrix.makePerspective(50, window.innerWidth/window.innerHeight, 1.0, 100.0, viewer.getCamera().getProjectionMatrix());
+    viewer.getCamera().setComputeNearFar(false);
+
+    viewer.setSceneData(rotate);
     if (true) {
         viewer.setupManipulator();
         viewer.getManipulator().computeHomePosition();
@@ -29,9 +33,24 @@ var main = function() {
         viewer.getManipulator().update(0,0);
 
         var UpdateCameraInverseMatrix = function() {
+            var cameraInverseUniform = osg.Uniform.createMatrix4(osg.Matrix.makeIdentity([]),'CameraInverseMatrix');
+            var time = osg.Uniform.createFloat1(0.0, "time");
+            this.time = time;
+            this.cameraInverseUniform = cameraInverseUniform;
+
+            viewer.getCamera().getOrCreateStateSet().addUniform(cameraInverseUniform);
+            viewer.getCamera().getOrCreateStateSet().addUniform(time);
+
             this.update = function(node, nv) {
-                var cameraInverseUniform = osg.Uniform.createMatrix4(osg.Matrix.makeIdentity([]),'CameraInverseMatrix');
-                viewer.getCamera().getOrCreateStateSet().addUniform(cameraInverseUniform);
+                var t = nv.getFrameStamp().getSimulationTime();
+                this.time.get()[0] = t;
+                this.time.dirty();
+
+                var matrix = viewer.getManipulator().getInverseMatrix();
+                var inv = [];
+                osg.Matrix.inverse(matrix, inv);
+                this.cameraInverseUniform.set(inv);
+
                 return true;
             };
         };

@@ -175,6 +175,11 @@ var loadModel = function(url) {
                 loadModel.shadowShader = getShadowShader();
             }
 
+            if (loadModel.depth === undefined) {
+                loadModel.depth = new osg.Depth();
+                loadModel.depth.setWriteMask(false);
+            }
+
             var eyeFinder = new FindEye();
             var stateSet;
             model.accept(eyeFinder);
@@ -195,10 +200,6 @@ var loadModel = function(url) {
                 stateSet.setAttributeAndMode(loadModel.shadowShader);
                 stateSet.addUniform(osg.Uniform.createInt1(1,"Texture1"));
                 stateSet.setRenderingHint('TRANSPARENT_BIN');
-                if (loadModel.depth === undefined) {
-                    loadModel.depth = new osg.Depth();
-                    loadModel.depth.setWriteMask(false);
-                }
                 stateSet.setAttributeAndMode(loadModel.depth);
             }
 

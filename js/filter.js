@@ -21,7 +21,15 @@ var commonScene = function(scene, rttSize) {
     camera.setRenderOrder(osg.Camera.PRE_RENDER, 0);
     camera.setReferenceFrame(osg.Transform.RELATIVE_RF);
     camera.setViewport(new osg.Viewport(0,0,rttSize[0],rttSize[1]));
-    camera.setClearColor([0.5, 0.5, 0.5, 1]);
+    camera.setComputeNearFar(false);
+
+//    camera.setProjectionMatrix(osg.Matrix.makePerspective());
+//    osg.Matrix.makePerspective(50, window.innerWidth/window.innerHeight, 1.0, 30.0, camera.getProjectionMatrix());
+//    camera.setViewMatrix(Viewer.getCamera().getViewMatrix());
+    //osg.Matrix.makePerspective(50, window.innerWidth/window.innerHeight, 1.0, 1000.0, camera.getProjectionMatrix());
+
+    camera.setClearColor([107/255, 107/255, 107/255, 1.0]);
+    camera.setClearMask(osg.Camera.COLOR_BUFFER_BIT | osg.Camera.DEPTH_BUFFER_BIT);
     
     // texture attach to the camera to render the scene on
     var rttTexture = new osg.Texture();
@@ -37,7 +45,6 @@ var commonScene = function(scene, rttSize) {
     root.addChild(camera);
     return [root, rttTexture];
 };
-
 
 var createFilter = function(texture) {
 
@@ -177,8 +184,124 @@ var createFilter = function(texture) {
 };
 
 
+
+var createFilterScanlines = function(texture) {
+
+    var getShader = function() {
+        var vertexshader = [
+            "",
+            "#ifdef GL_ES",
+            "precision highp float;",
+            "#endif",
+            "attribute vec3 Vertex;",
+            "attribute vec2 TexCoord0;",
+            "varying vec2 FragTexCoord0;",
+            "uniform mat4 ModelViewMatrix;",
+            "uniform mat4 ProjectionMatrix;",
+            "void main(void) {",
+            "  gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(Vertex,1.0);",
+            "  FragTexCoord0 = TexCoord0;",
+            "}",
+            ""
+        ].join('\n');
+
+        var fragmentshader = [
+            "#ifdef GL_ES",
+            "precision highp float;",
+            "#endif",
+            "uniform sampler2D Texture0;",
+            "uniform float time;",
+            "uniform bool grayscale;",
+            "uniform float nIntensity;",
+            "uniform float sIntensity;",
+            "uniform float sCount;",
+
+            "uniform vec2 resolution;",
+            "varying vec2 FragTexCoord0;",
+
+            "void main() {",
+            "vec2 imageCoord = FragTexCoord0;",
+            "vec4 textureScreen = texture2D( Texture0, FragTexCoord0 );",
+            "float x = FragTexCoord0.x * FragTexCoord0.y * time *  1000.0;",
+            "x = mod( x, 13.0 ) * mod( x, 123.0 );",
+            "float dx = mod( x, 0.01 );",
+
+            // add noise
+            "vec3 cResult = textureScreen.rgb + textureScreen.rgb * clamp( 0.1 + dx * 100.0, 0.0, 1.0 );",
+
+            // get us a sine and cosine
+            "vec2 sc = vec2( sin( FragTexCoord0.y * sCount ), cos( FragTexCoord0.y * sCount ) );",
+
+            // add scanlines
+            "cResult += textureScreen.rgb * vec3( sc.x, sc.y, sc.x ) * sIntensity;",
+
+            // interpolate between source and result by intensity
+            "cResult = textureScreen.rgb + clamp( nIntensity, 0.0,1.0 ) * ( cResult - textureScreen.rgb );",
+
+            // convert to grayscale if desired
+            "cResult = vec3( cResult.r * 0.6,  cResult.g * 0.59, cResult.b * 0.5 );",
+            "if( grayscale ) {",
+
+            "cResult = vec3( cResult.r * 0.3 + cResult.g * 0.59 + cResult.b * 0.11 );",
+
+            "}",
+
+            "gl_FragColor =  vec4( cResult, 1.0 );",
+            "}"
+        ].join("\n");
+
+
+        var program = new osg.Program(
+            new osg.Shader(gl.VERTEX_SHADER, vertexshader),
+            new osg.Shader(gl.FRAGMENT_SHADER, fragmentshader));
+        return program;
+    };
+
+
+    var quadSize = [ 16/9, 1 ];
+
+    // add a node to animate the scene
+    var root = new osg.MatrixTransform();
+
+    // create a textured quad with the texture that will contain the
+    // scene
+    var cam = new osg.Camera();
+    cam.setReferenceFrame(osg.Transform.ABSOLUTE_RF);
+    cam.setProjectionMatrixAsOrtho(-window.innerWidth/2.0,
+                                   window.innerWidth/2.0,
+                                   -window.innerHeight/2.0,
+                                   window.innerHeight/2.0,
+                                   -2,2);
+
+    var quad = osg.createTexturedQuadGeometry(-window.innerWidth/2.0, -window.innerHeight/2.0, 0,
+                                              window.innerWidth, 0 ,0,
+                                              0, window.innerHeight ,0);
+    quad.setNodeMask(1);
+    var stateSet = quad.getOrCreateStateSet();
+    // attach the texture to the quad
+    stateSet.setTextureAttributeAndMode(0, texture);
+    stateSet.addUniform(osg.Uniform.createFloat2([1.0/window.innerWidth,1.0/window.innerHeight], "resolution"));
+
+//    stateSet.addUniform(osg.Uniform.createFloat1(0.0, "time"));
+    stateSet.addUniform(osg.Uniform.createFloat1(0.5, "nIntensity"));
+    stateSet.addUniform(osg.Uniform.createFloat1(0.05, "sIntensity"));
+    stateSet.addUniform(osg.Uniform.createFloat1(4096, "sCount"));
+    stateSet.addUniform(osg.Uniform.createInt1(0, "grayscale"));
+
+//    stateSet.addUniform(osg.Uniform.createFloat4([1.0, 1.0, 1.0, 1.0], "background"));
+//    stateSet.addUniform(osg.Uniform.createFloat4([0.0, 0.0, 0.0, 1.0], "foreground"));
+
+    stateSet.setAttributeAndMode(getShader());
+
+    cam.addChild(quad);
+    // attach quad to root
+    root.addChild(cam);
+    return root;
+};
+
+
 var makeFilter = function(root_scene) {
-    return root_scene;
+ //   return root_scene;
     var rttSize = [window.innerWidth, window.innerHeight];
 
     var result = commonScene(root_scene, rttSize);
@@ -194,7 +317,8 @@ var makeFilter = function(root_scene) {
     root.getOrCreateStateSet().addUniform(tex_h);
     root.addChild(commonNode);
 
-    var scene = createFilter(texture);
+//    var scene = createFilter(texture);
+    var scene = createFilterScanlines(texture);
     scene.setMatrix(osg.Matrix.makeTranslate(0,0,0.0,[]));
     root.addChild(scene);
 
