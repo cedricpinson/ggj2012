@@ -351,7 +351,7 @@ BoidGeometry.prototype = {
 
     kill: function() {
         this.killme = true;
-        this.time = (new Date()).getTime();
+        this.time = (new Date()).getTime()+1.0;
     },
 
     updatePosition: function(pos, vec, scale) {
@@ -372,7 +372,7 @@ BoidGeometry.prototype = {
 
         if (this.killme) {
             var t = (new Date()).getTime();
-            var dt = (t-this.time);
+            var dt = 1.0 - (this.time-t);
             s = osgAnimation.EaseInCubic(dt);
         }
 
