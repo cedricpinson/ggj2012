@@ -211,7 +211,6 @@ function newBoid(id, x, y, u, v, color, url) {
 
             osg.Vec3.sub(childPosition, osg.Vec3.mult(p, osg.Vec3.length(p)*dt, []), b1.pos);
 
-            return;
         }
 
         for(var j=space.boidsList.length-1; j >= 0 ; j--) {
@@ -220,9 +219,24 @@ function newBoid(id, x, y, u, v, color, url) {
                 continue;
             }
             	    
-            if (b1.color === CONF.BLACK && b1.locked !== true && b1.parent === undefined && b2.anchor !== undefined && b2.child === undefined) {
+            if (b1.color === CONF.BLACK && b2.anchor !== undefined && b2.child === undefined ) {
                 if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) {
+		    var b3 = b2.parent;
+		    var quit = false;
+		    while(b3) {
+			if (b1 === b3) {
+			    quit = true;
+			}
+			b3 = b3.parent;
+		    }
+		    if (quit) {
+			continue;
+		    }
+
                     b1.locked = true;
+		    if (b1.parent) {
+			delete b1.parent.child;
+		    }
                     b1.parent = b2;
                     b2.child = b1;
                     b1.speed = b2.speed;
@@ -245,6 +259,10 @@ function newBoid(id, x, y, u, v, color, url) {
                     return;
                 }
             }
+
+	    if (b1.parent) {
+		continue;
+	    }
 
             var dir = osg.Vec3.sub(b1.pos, b2.pos, []);         
             var d = osg.Vec3.length(dir);
@@ -531,10 +549,11 @@ function newPlayer(id, x, y, u, v) {
 		}
 	    }
 
+	    /*
             if (boid.getPlayerLoopChain()) {
                 return;
             }
-
+	    */
 
 	    
 	    if (b1.child && b2.anchor !== undefined && b2.child === undefined && b1.child !== b2 && b1.count > CONF.min_chain) {
@@ -556,14 +575,21 @@ function newPlayer(id, x, y, u, v) {
 		    }
 
 		    delete b1.child;
+
+		    b1.locked = false;
+		    setTimeout(function() {
+			b1.locked = true;
+		    }, 1000);
+
 		    var audio = $('#Ahhh').get(0);   
 		    audio.currentTime = 0;
 		    audio.play();
 
+		    /*
                     var whiteElements = isWhiteInsideChain(chain, space.boidList);
                     osg.log("New chain with white elements");
                     osg.log(whiteElements);
-
+		    */
 		    
 		    return;
 		}
