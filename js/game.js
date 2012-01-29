@@ -337,7 +337,7 @@ function newPlayer(id, x, y, u, v) {
 		    b1.child.parent = b2;
 		    b2.child = b1.child;
 		    b2.count = b1.count;
-		    chains.push(b2)
+		    chains.unshift(b2);
 		    
 		    delete b1.child;
 		    var audio = $('#Ahhh').get(0);   
