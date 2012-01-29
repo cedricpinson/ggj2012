@@ -191,7 +191,7 @@ var createScene = function () {
     texture.setWrapT(osg.Texture.CLAMP_TO_EDGE);
     var depth = new osg.Depth();
     depth.setWriteMask(false);
-    bg.getOrCreateStateSet().setAttributeAndMode(depth);
+    plane.getOrCreateStateSet().setAttributeAndMode(depth);
 
     texture.setImage(osgDB.readImage('data/bg.png'));
     var m = new osg.Material();
