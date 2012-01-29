@@ -221,6 +221,10 @@ var createScene = function () {
 	mainUpdate.playerInputDown(event);
     });
 
+    var audio = $("#Track01").get(0);
+    audio.volume=0.5;
+    audio.play();
+
     return makeFilter(root);
     return root;
 };

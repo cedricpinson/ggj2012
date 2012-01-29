@@ -50,6 +50,21 @@
   width:100%;
   }
 
+  #Won {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 100;
+  display: none;
+  }
+
+  #Levels {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 100;
+  }
+
 </style>
 
 <title>Flocky</title>
@@ -75,6 +90,9 @@
     <img id="menu-image" src="menu.jpg">
   </div>
 -->
+<img id="Levels" src="data/levels.jpg"/>
+<img id="Won" src="data/won.jpg"/>
+
   <div id="ViewContainer">
   <canvas id="3DView"></canvas>
   </div>
@@ -159,7 +177,7 @@
 
 
   <audio id="Ahhh">
-    <source src="music/ogg/Ahhh.ogg" />
+    <source src="music/ogg/cercle_moyen.ogg" />
   </audio>
 
 

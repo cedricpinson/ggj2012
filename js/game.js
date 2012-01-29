@@ -71,6 +71,7 @@ var explosions = [
 var chains = [];
 
 var score = 0;
+var whites = 0;
 
 function killChain(b) {
 
@@ -539,13 +540,18 @@ function newPlayer(id, x, y, u, v) {
 			var bb;
 			
 			function wE(b) {
+			    b.toKill = true;
 			    b.geom.kill(function(){
 				b.toDelete = true;
+				whites--;
+				if (whites === 0) {
+				    space.youWon();
+				}
 			    });
 			}
 			
 			while((bb = whiteElements.shift())) {
-			    if (bb) {
+			    if (bb && bb.toKill !== true) {
 				wE(bb);
 			    }
 			}
@@ -553,6 +559,7 @@ function newPlayer(id, x, y, u, v) {
                     } else {
 			for(var i = 0; i < CONF.white_spawn; i++) {
 			    space.newRandomBoid(CONF.WHITE);
+			    whites++;
 			}
 		    }
 
@@ -642,7 +649,11 @@ function newSpace() {
 	}
 	
     };
-
+    
+    space.youWon = function() {
+	osg.log("YOU WON");
+    };
+    
     return space;
 }
 
@@ -656,6 +667,7 @@ MainUpdate.prototype = {
     playerInput: function(point) {
 	//osg.Vec3.normalize(osg.Vec3.sub(this._space.player1.pos, point, []), this._space.player1.vTo);
     },
+
     
     initLevel: function(id) {
 	$("#Menu").hide("slow");
@@ -681,17 +693,20 @@ MainUpdate.prototype = {
 	case "Level 1":
 	    CONF.white_spawn = 1;
 	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    whites = 1;
 	    break;
 	case "Level 2":
 	    CONF.white_spawn = 2;
 	    space.newRandomBoid(CONF.WHITE); // WHITE
 	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    whites = 2;
 	    break;
 	case "Level 3":
 	    CONF.white_spawn = 3;
 	    space.newRandomBoid(CONF.WHITE); // WHITE
 	    space.newRandomBoid(CONF.WHITE); // WHITE
 	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    whites = 3;
 	    break;	    
 	}
 	
@@ -710,8 +725,13 @@ MainUpdate.prototype = {
 	    for(var i = 0; i < this._space.boidsList.length; i++) {
 		var boid = this._space.boidsList[i];
 		if (boid.color === CONF.WHITE) {
+		    var self = this;
 		    boid.geom.kill(function() {
 			boid.toDelete = true;
+			whites--;
+			if(whites === 0) {
+			    self._space.youWon();
+			}
 		    });
 		    break;
 		}
