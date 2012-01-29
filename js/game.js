@@ -617,10 +617,19 @@ function newSpace() {
 	for(i=space.boidsList.length-1; i >= 0; i--) {
 	    space.boidsList[i].update(dt, space, t);
 	}	
-	
+	var toDel=false;
 	for(i=space.boidsList.length-1; i >= 0; i--) {
             space.boidsList[i].step(dt, space, t);
+	    if (space.boidsList[i].toDelete === true) {
+		toDel = true;
+	    }
         }
+
+	if (toDel === true) {
+	    space.boidsList = space.boidsList.filter(function(b) {
+		return b.toDelete === undefined;
+	    });
+	}
 	
     };
 
@@ -691,7 +700,9 @@ MainUpdate.prototype = {
 	    for(var i = 0; i < this._space.boidsList.length; i++) {
 		var boid = this._space.boidsList[i];
 		if (boid.color === CONF.WHITE) {
-		    boid.geom.kill();
+		    boid.geom.kill(function() {
+			boid.toDelete = true;
+		    });
 		    break;
 		}
 	    }
