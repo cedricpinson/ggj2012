@@ -102,9 +102,9 @@ function killChain(b) {
     }
 }
 
-function newBoid(id, x, y, u, v, color) {
+function newBoid(id, x, y, u, v, color, url) {
     var col = color == CONF.WHITE ? "white" : "black";
-    var g = new BoidGeometry(col);
+    var g = new BoidGeometry(col, url);
     var boid = {
 	id: id,
 	pos: [ x, y, 0 ],
@@ -303,7 +303,7 @@ boid.computeAnchorPosition = function(position, result) {
 }
 
 function newPlayer(id, x, y, u, v) {
-    var boid = newBoid(id, x, y, u, v, CONF.BLACK);
+    var boid = newBoid(id, x, y, u, v, CONF.BLACK, "data/bite.osgjs");
     boid.speed = CONF.player_speed;
     boid.vTo = [ boid.v[0], boid.v[1], boid.v[2] ];
     boid.locked = true;
