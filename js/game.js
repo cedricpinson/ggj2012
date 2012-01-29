@@ -102,6 +102,28 @@ function killChain(b) {
     }
 }
 
+function updateExplode(boid, dt, t) {
+
+    if (boid.explode) {
+        var myt = osgAnimation.EaseInCubic(Math.max(0.0,(boid.explodeTime-t)));
+        boid.pos[0] = boid.pos[0]+dt*40*myt*boid.explode[0];
+        boid.pos[1] = boid.pos[1]+dt*40*myt*boid.explode[1];
+        boid.pos[2] = boid.pos[2]+dt*myt*boid.explode[2];
+        if (boid.pos[2] < 0) {
+            boid.pos[2] = 0;
+        }
+        osg.log(boid.pos);
+
+        if (t > boid.explodeTime ) {
+            delete boid.explode;
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 function newBoid(id, x, y, u, v, color) {
     var col = color == CONF.WHITE ? "white" : "black";
     var g = new BoidGeometry(col);
@@ -114,12 +136,12 @@ function newBoid(id, x, y, u, v, color) {
 	color: color
     };
 
-    boid.update = function(dt, space) {
+    boid.update = function(dt, space, t) {
 	var b1 = boid;
 	var sep = [0,0,0];
 	var align = [0,0,0];
 	var cohesion = [0,0,0];
-	
+
         // I am grabbed to a parent boid
 	if (b1.parent !== undefined && b1.parent.anchor) {
 
@@ -245,9 +267,16 @@ function newBoid(id, x, y, u, v, color) {
 	osg.Vec3.normalize(b1.v, b1.v);
     };
 
-    boid.step = function(dt, space) {
+    boid.step = function(dt, space, t) {
 	var b = boid;
 	b.v[2] = 0.0;
+
+        if (updateExplode(boid, dt, t)) {
+            boid.geom.updatePosition(boid.pos, boid.v);
+            return;
+        }
+
+
 	osg.Vec3.normalize(b.v, b.v);
         var v = osg.Vec3.mult(b.v, dt*b.speed, []);
         var next = osg.Vec3.add(b.pos, v, []);
@@ -308,7 +337,16 @@ function newPlayer(id, x, y, u, v) {
     boid.vTo = [ boid.v[0], boid.v[1], boid.v[2] ];
     boid.locked = true;
     boid.player = true;
-    boid.update = function(dt, space) {
+
+    var explode = function(source, boid) {
+        var diff = [];
+        diff[0] = boid.pos[0] - source[0];
+        diff[1] = boid.pos[1] - source[1];
+        diff[2] = boid.pos[2] - (source[2]-1.0);
+        boid.explode = diff;
+    };
+
+    boid.update = function(dt, space, t) {
 	
 	var b1 = boid;
 
@@ -329,6 +367,8 @@ function newPlayer(id, x, y, u, v) {
 			var audio = $(snd).get(0);
 			audio.currentTime = 0;
 			audio.play();
+                        explode(b2.pos, b1);
+                        b1.explodeTime = t+1.0;
 		    } else {
 			var c = chains.shift();
 			if (c) {
@@ -419,15 +459,15 @@ function newSpace() {
 	return boid;
     };
     
-    space.update = function(dt) {
+    space.update = function(dt, t) {
 	var i;
 
 	for(i=space.boidsList.length-1; i >= 0; i--) {
-	    space.boidsList[i].update(dt, space);
+	    space.boidsList[i].update(dt, space, t);
 	}	
 	
 	for(i=space.boidsList.length-1; i >= 0; i--) {
-            space.boidsList[i].step(dt, space);
+            space.boidsList[i].step(dt, space, t);
         }
 	
     };
@@ -502,7 +542,7 @@ MainUpdate.prototype = {
         var dt = t - this._lastUpdate;
 
         this._lastUpdate = t;
-	this._space.update(dt);
+	this._space.update(dt,t);
         
         return true;
     }

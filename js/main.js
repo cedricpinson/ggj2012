@@ -83,6 +83,9 @@ var main = function() {
                 up[0] = PlayerMe.v[0];
                 up[1] = PlayerMe.v[1];
                 up[2] = 0;
+
+                
+
                 osg.Matrix.makeLookAt(eye,
                                       pos,
                                       up, 
@@ -123,7 +126,7 @@ var main = function() {
                      'point': point
                    };
         };
-        viewer.getManipulator().getIntersection = getIntersection;
+        //viewer.getManipulator().getIntersection = getIntersection;
 
         var mouseup = function(ev) {
             this.dragging = false;
@@ -139,7 +142,7 @@ var main = function() {
 		}
             }
         };
-        viewer.getManipulator().mouseup = mouseup;
+        //viewer.getManipulator().mouseup = mouseup;
 
     }
 
