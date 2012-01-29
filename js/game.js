@@ -537,13 +537,10 @@ function newPlayer(id, x, y, u, v) {
                         osg.log("New chain with white elements");
                         osg.log(whiteElements);
 			
-			space.boidsList = space.boidsList.filter(function(b) {
-			    return whiteElements.indexOf(b) === -1;
-			});
 			var bb;
 			while((bb = whiteElements.shift())) {
 			    if (bb) {
-				bb.pos = e[-1000, -1000, -1000];
+				bb.geom.kill();
 			    }
 			}
 			
