@@ -746,7 +746,7 @@ MainUpdate.prototype = {
 	    this._space.ctrl[1] = 0;
 	} else if (event.keyCode === 37) {
 	    this._space.ctrl[0] = 0;
-	} else if (event.keyCode === 32) {
+	}/* else if (event.keyCode === 32) {
 	    for(var i = 0; i < this._space.boidsList.length; i++) {
 		var boid = this._space.boidsList[i];
 		if (boid.color === CONF.WHITE) {
@@ -762,7 +762,7 @@ MainUpdate.prototype = {
 		}
 	    }
 	    
-	}
+	}*/
     },
     
     playerInputDown: function(event) {
