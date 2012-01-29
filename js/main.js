@@ -138,7 +138,7 @@ var main = function() {
                      'point': point
                    };
         };
-        viewer.getManipulator().getIntersection = getIntersection;
+        //viewer.getManipulator().getIntersection = getIntersection;
 
         var mouseup = function(ev) {
             this.dragging = false;
@@ -154,7 +154,7 @@ var main = function() {
 		}
             }
         };
-        viewer.getManipulator().mouseup = mouseup;
+        //viewer.getManipulator().mouseup = mouseup;
 
     }
 

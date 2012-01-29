@@ -105,6 +105,30 @@ function killChain(b) {
     }
 }
 
+function updateExplode(boid, dt, t) {
+
+    if (boid.explode) {
+        var myt = osgAnimation.EaseInQuad(Math.max(0.0,(boid.explodeTime-t)));
+        boid.pos[0] = boid.pos[0]+dt*30*myt*myt*boid.explode[0];
+        boid.pos[1] = boid.pos[1]+dt*30*myt*myt*boid.explode[1];
+        boid.pos[2] = boid.pos[2]; //+dt*20*myt*boid.explode[2] - 9.81*dt;
+
+        //myt = osgAnimation.EaseOutQuad(Math.max(0.0,(boid.explodeTime-t)));
+        boid.v[0] = boid.srcdir[0] + (1.0-myt)*(boid.newdir[0]-boid.srcdir[0]);
+        boid.v[1] = boid.srcdir[1] + (1.0-myt)*(boid.newdir[1]-boid.srcdir[1]);
+        boid.v[2] = 0.0;
+
+        osg.Vec3.normalize(boid.v, boid.v);
+
+        if (t > boid.explodeTime ) {
+            delete boid.explode;
+        }
+        return true;
+    }
+
+    return false;
+}
+
 function newBoid(id, x, y, u, v, color, url) {
     var col = color == CONF.WHITE ? "white" : "black";
     var g = new BoidGeometry(col, url);
@@ -116,13 +140,14 @@ function newBoid(id, x, y, u, v, color, url) {
         geom: g,
 	color: color
     };
+    boid.originalSpeed = CONF.boid_speed;
 
-    boid.update = function(dt, space) {
+    boid.update = function(dt, space, t) {
 	var b1 = boid;
 	var sep = [0,0,0];
 	var align = [0,0,0];
 	var cohesion = [0,0,0];
-	
+
         // I am grabbed to a parent boid
 	if (b1.parent !== undefined && b1.parent.anchor) {
 
@@ -248,9 +273,22 @@ function newBoid(id, x, y, u, v, color, url) {
 	osg.Vec3.normalize(b1.v, b1.v);
     };
 
-    boid.step = function(dt, space) {
+    boid.step = function(dt, space, t) {
 	var b = boid;
 	b.v[2] = 0.0;
+
+        if (updateExplode(boid, dt, t)) {
+            boid.geom.updatePosition(boid.pos, boid.v, -(t-boid.explodeTime) );
+            return;
+        }
+
+        b.speed += dt*boid.originalSpeed;
+        if (b.parent) {
+            b.speed = Math.min(b.speed, boid.parent.speed);
+        } else {
+            b.speed = Math.min(b.speed, boid.originalSpeed);
+        }
+
 	osg.Vec3.normalize(b.v, b.v);
         var v = osg.Vec3.mult(b.v, dt*b.speed, []);
         var next = osg.Vec3.add(b.pos, v, []);
@@ -307,11 +345,32 @@ boid.computeAnchorPosition = function(position, result) {
 
 function newPlayer(id, x, y, u, v) {
     var boid = newBoid(id, x, y, u, v, CONF.BLACK, "data/bite.osgjs");
+    boid.originalSpeed = CONF.player_speed;
     boid.speed = CONF.player_speed;
     boid.vTo = [ boid.v[0], boid.v[1], boid.v[2] ];
     boid.locked = true;
     boid.player = true;
-    boid.update = function(dt, space) {
+
+    var explode = function(source, boid) {
+        var diff = [];
+        diff[0] = boid.pos[0] - source[0];
+        diff[1] = boid.pos[1] - source[1];
+        diff[2] = boid.pos[2] - (source[2]-1.0);
+        boid.explode = diff;
+        boid.newdir = [];
+        boid.srcdir = [];
+
+        boid.speed = 0;
+
+        boid.srcdir[0] = boid.v[0];
+        boid.srcdir[1] = boid.v[1];
+        boid.srcdir[2] = 0;
+        boid.newdir[0] = diff[0];
+        boid.newdir[1] = diff[1];
+        boid.newdir[2] = 0;
+    };
+
+    boid.update = function(dt, space, t) {
 	
 	var b1 = boid;
 
@@ -322,7 +381,7 @@ function newPlayer(id, x, y, u, v) {
 	    }
 	    
 	    if (b1.protect !== true && b2.color === CONF.WHITE) {
-		var dir = osg.Vec3.sub(b1.pos, b2.pos, []);         
+		var dir = osg.Vec3.sub(b1.pos, b2.pos, []);
 		var d = osg.Vec3.length(dir);
 		if (d < CONF.white_kill_d) {
 		    if (b1.child) {
@@ -353,6 +412,9 @@ function newPlayer(id, x, y, u, v) {
 			    audio.play();
 			}
 		    }
+                    explode(b2.pos, b1);
+                    b1.explodeTime = t+1.0;
+
 		    b1.protect = true;
 		    setTimeout(function() {
 			b1.protect = false;
@@ -443,15 +505,15 @@ function newSpace() {
 	return boid;
     };
     
-    space.update = function(dt) {
+    space.update = function(dt, t) {
 	var i;
 
 	for(i=space.boidsList.length-1; i >= 0; i--) {
-	    space.boidsList[i].update(dt, space);
+	    space.boidsList[i].update(dt, space, t);
 	}	
 	
 	for(i=space.boidsList.length-1; i >= 0; i--) {
-            space.boidsList[i].step(dt, space);
+            space.boidsList[i].step(dt, space, t);
         }
 	
     };
@@ -522,7 +584,7 @@ MainUpdate.prototype = {
         var dt = t - this._lastUpdate;
 
         this._lastUpdate = t;
-	this._space.update(dt);
+	this._space.update(dt,t);
         
         return true;
     }
