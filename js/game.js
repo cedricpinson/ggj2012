@@ -397,6 +397,7 @@ function newSpace() {
 	if (id === 0) {
 	    boid = newPlayer(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random());
 	    space.player1 = boid;
+            PlayerMe = space.player1;
 	} else {
 	    boid = newBoid(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random(), color);
 	}

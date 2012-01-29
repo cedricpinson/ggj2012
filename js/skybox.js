@@ -43,17 +43,19 @@ var createSkyBox = function() {
     };
 
     var model = new osg.MatrixTransform();
-    var url = "data/skybox.osgjs";
+    var url = "data/arena.osgjs";
     jQuery.getJSON(url, function(data) {
         var m = osgDB.parseSceneGraph(data);
-        m.getOrCreateStateSet().setAttributeAndMode(getShader(), osg.StateAttribute.OVERRIDE);
-        var texture = osg.Uniform.createInt1(1,"Texture1");
-        m.getOrCreateStateSet().addUniform(texture);
+        if (false) {
+            m.getOrCreateStateSet().setAttributeAndMode(getShader(), osg.StateAttribute.OVERRIDE);
+            var texture = osg.Uniform.createInt1(1,"Texture1");
+            m.getOrCreateStateSet().addUniform(texture);
+        }
         m.setName(url);
         model.addChild(m);
         model.setName(url + "_instance");
     });
-
-    //osg.Matrix.makeTranslate(0.0,0.0,-40, model.getMatrix());
+    
+    osg.Matrix.makeTranslate(CONF.space_width*0.5, CONF.space_width*0.5,0, model.getMatrix());
     return model;
 };

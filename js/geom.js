@@ -293,6 +293,7 @@ var BoidGeometry = function(color) {
         var m = new osg.Material();
         m.setDiffuse([1,0,1,1]);
         mt.getOrCreateStateSet().setAttributeAndMode(m);
+        Target = mt;
     } else {
         mt.setStateSet(BoidGeometry.stateSet);
     }

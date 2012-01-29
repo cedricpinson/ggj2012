@@ -1,5 +1,8 @@
 var mainUpdate;
 var Viewer;
+var Target;
+var PlayerMe;
+
 var main = function() {
     var canvas = document.getElementById("3DView");
     var w = window.innerWidth;
@@ -23,6 +26,7 @@ var main = function() {
         viewer.getCamera().setClearColor([0.0, 0.0, 0.0, 0.0]);
     osg.Matrix.makePerspective(50, window.innerWidth/window.innerHeight, 1.0, 100.0, viewer.getCamera().getProjectionMatrix());
     viewer.getCamera().setComputeNearFar(false);
+
 
     viewer.setSceneData(rotate);
     if (true) {
@@ -51,9 +55,43 @@ var main = function() {
                 osg.Matrix.inverse(matrix, inv);
                 this.cameraInverseUniform.set(inv);
 
+                if (false && Target) {
+
+                    Target.dirtyBound();
+                    viewer.getManipulator().setNode(Target);
+                    viewer.getManipulator().setDistance(2);
+                    viewer.getManipulator().update(0,0);
+                }
                 return true;
             };
         };
+
+        viewer.getManipulator().getInverseMatrix = function() {
+            var inv = osg.Matrix.makeIdentity([]);
+            if (Target && PlayerMe) {
+                
+                
+                var mtx = Target.getWorldMatrices();
+                var pos = [];
+                osg.Matrix.getTrans(mtx[0], pos);
+                var eye = [];
+                eye[0] = pos[0];
+                eye[1] = pos[1];
+                eye[2] = 35;
+
+                var up = [0, 1, 0];
+                up[0] = PlayerMe.v[0];
+                up[1] = PlayerMe.v[1];
+                up[2] = 0;
+                osg.Matrix.makeLookAt(eye,
+                                      pos,
+                                      up, 
+                                      inv);
+            }
+            return inv;
+        };
+                    
+
         root.addUpdateCallback(new UpdateCameraInverseMatrix());
 
         var getIntersection = function() {
@@ -145,8 +183,8 @@ var createScene = function () {
     plane.getOrCreateStateSet().setAttributeAndMode(m);
     plane.setNodeMask(2);
 
-    bg.addChild(plane);
-//    bg.addChild(createSkyBox());
+    //bg.addChild(plane);
+    bg.addChild(createSkyBox());
     
     plane.setName("plane");
     plane.itemToIntersect = {};
