@@ -238,13 +238,24 @@ function newBoid(id, x, y, u, v, color, url) {
 			delete b1.parent.child;
 		    }
                     b1.parent = b2;
+		    if (b2.child) {
+			delete b2.child.parent;
+		    }
                     b2.child = b1;
                     b1.speed = b2.speed;
 
-		    for(var bb=b1, count=0; bb !== undefined; count++) {
+		    var bb = b1;
+		    while(bb.child) {
+			bb = bb.child;
+			if (bb === b1) {
+			    break;
+			}
+		    }
+		    var bstart = bb;
+		    for(count=0; bb !== undefined; count++) {
 			bb.count = count;
 			bb = bb.parent;
-			if (bb === b1) {
+			if (bb === bstart) {
 			    break;
 			}
 		    }
@@ -511,9 +522,9 @@ function newPlayer(id, x, y, u, v) {
 
 		    //var count = Math.min(b2.count, 10);
 		    
-		    for(var i = 0; i < b2.count; i++) {
-			space.newRandomBoid(CONF.WHITE);
-		    }
+		    //for(var i = 0; i < b2.count; i++) {
+		    space.newRandomBoid(CONF.WHITE);
+		    //}
 
 		    delete b1.child;
 
