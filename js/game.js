@@ -538,10 +538,17 @@ function newPlayer(id, x, y, u, v) {
                         osg.log(whiteElements);
 			
 			var bb;
-			while((bb = whiteElements.shift())) {
+
+			function wE(bb) {
 			    if (bb) {
-				bb.geom.kill();
+				bb.geom.kill(function(){
+				    bb.toDelete = true;
+				});
 			    }
+			}
+			
+			while((bb = whiteElements.shift())) {
+			    wE(bb);
 			}
 			
                     } else {
@@ -627,7 +634,11 @@ function newSpace() {
 
 	if (toDel === true) {
 	    space.boidsList = space.boidsList.filter(function(b) {
-		return b.toDelete === undefined;
+		if (b.toDelete === true) {
+		    osg.log("removing "+b.id);
+		    return false
+		}
+		return true;
 	    });
 	}
 	

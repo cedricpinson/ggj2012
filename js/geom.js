@@ -377,6 +377,7 @@ BoidGeometry.prototype = {
             var dt = 1.0 - (this.time-t)/this.duration;
             if (t > this.time) {
                 if (this.cb) {
+		    osg.log("calling CB");
                     this.cb();
                 }
                 this.node.setNodeMask(0x0);
