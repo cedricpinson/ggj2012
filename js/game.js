@@ -29,11 +29,11 @@ var CONF = {
 var levels = {
     "Level 1" : { 1: 0,
 		  2: 10 },
-    "Level 2" : { 1: 1,
+    "Level 2" : { 1: 0,
 		  2: 20 },
-    "Level 3" : { 1: 5,
+    "Level 3" : { 1: 0,
 		  2: 45 },
-    "Level 4" : { 1: 25,
+    "Level 4" : { 1: 0,
 		  2: 75 }
 };
 
@@ -70,6 +70,8 @@ var explosions = [
 ]
 
 var chains = [];
+
+var score = 0;
 
 function killChain(b) {
 
@@ -334,6 +336,8 @@ function newPlayer(id, x, y, u, v) {
 		    } else {
 			var c = chains.shift();
 			if (c) {
+			    score -= c.count;
+			    osg.log(score);
 			    killChain(c);
 			    var i=0;
 			    if (c.count > 4) {
@@ -366,6 +370,15 @@ function newPlayer(id, x, y, u, v) {
 		    b1.count = 0;
 		    chains.unshift(b2);
 		    
+		    score += b2.count;
+		    osg.log(score);
+
+		    //var count = Math.min(b2.count, 10);
+		    
+		    for(var i = 0; i < b2.count; i++) {
+			space.newRandomBoid(CONF.WHITE);
+		    }
+
 		    delete b1.child;
 		    var audio = $('#Ahhh').get(0);   
 		    audio.currentTime = 0;
@@ -389,7 +402,7 @@ function newPlayer(id, x, y, u, v) {
 	if (rot > CONF.player_rot_max) {
 	    rot = CONF.player_rot_max;
 	}
-	osg.log(rot);
+	//osg.log(rot);
 	osg.Vec3.mult(v, ctrl, v);
 	osg.Vec3.add(boid.v, osg.Vec3.mult(v, dt*rot, []), boid.v);
 	osg.Vec3.normalize(boid.v, boid.v);
@@ -412,12 +425,18 @@ function newSpace() {
     
     space.newRandomBoid = function(color) {
 	var boid;
+	
+	var pos = [ Math.random()-0.5, Math.random()-0.5, 0 ];
+	osg.Vec3.normalize(pos, pos);
+	osg.Vec3.mult(pos, W/2, pos);
+	osg.Vec3.add(pos, [ W/2, H/2, 0], pos);
+
 	if (id === 0) {
-	    boid = newPlayer(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random());
+	    boid = newPlayer(id++, pos[0], pos[1], 0.5-Math.random(), 0.5-Math.random());
 	    space.player1 = boid;
             PlayerMe = space.player1;
 	} else {
-	    boid = newBoid(id++, Math.random()*W, Math.random()*H, 0.5-Math.random(), 0.5-Math.random(), color);
+	    boid = newBoid(id++, pos[0], pos[1], 0.5-Math.random(), 0.5-Math.random(), color);
 	}
 	space.boidsList.push(boid);
 	space.boidsMap[boid.id] = boid;
