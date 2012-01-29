@@ -10,7 +10,8 @@ var CONF = {
     boid_anchor_dist: -1.5,
     boid_grap_dist: 1.5,
 
-    player_rot: 5.0,
+    player_rot: 2.0,
+    player_rot_max: 5.0,
     player_speed: 6.0,
     key_step: 1,
     min_chain: 3,
@@ -373,6 +374,7 @@ function newPlayer(id, x, y, u, v) {
 		if (d < CONF.white_kill_d) {
 		    if (b1.child) {
 			killChain(b1);
+			b1.count = 0;
 			var snd = mr_lst[Math.floor(Math.random()*mr_lst.length)]; 
 			osg.log("PLAY "+snd);
 			var audio = $(snd).get(0);
@@ -425,20 +427,22 @@ function newPlayer(id, x, y, u, v) {
 	    }
 	}
 
-	space.ctrl[2] /= 1 + (dt*2);
-	//boid.speed = CONF.player_speed + (space.ctrl[2]/5);
-
-	//var v = osg.Vec3.sub(boid.v, boid.vTo, []);
 	var ctrl = -space.ctrl[0] + space.ctrl[1];
 	//osg.log(ctrl);
 	if(ctrl === 0 ) {
+	    space.ctrl[2] = 0;
 	    return;
 	}
 	var v = osg.Vec3.cross(boid.v, [0,0,1], []);
-
+	
+	space.ctrl[2] += dt*2;
+	var rot = CONF.player_rot + space.ctrl[2];
+	if (rot > CONF.player_rot_max) {
+	    rot = CONF.player_rot_max;
+	}
+	osg.log(rot);
 	osg.Vec3.mult(v, ctrl, v);
-
-	osg.Vec3.add(boid.v, osg.Vec3.mult(v, dt*CONF.player_rot, []), boid.v);
+	osg.Vec3.add(boid.v, osg.Vec3.mult(v, dt*rot, []), boid.v);
 	osg.Vec3.normalize(boid.v, boid.v);
 
     };
@@ -528,10 +532,8 @@ MainUpdate.prototype = {
 	//osg.log(event);
 	if (event.keyCode === 39) {
 	    this._space.ctrl[1] = 0;
-	    this._space.ctrl[2]++;
 	} else if (event.keyCode === 37) {
 	    this._space.ctrl[0] = 0;
-	    this._space.ctrl[2]++;
 	}
     },
     
@@ -539,10 +541,8 @@ MainUpdate.prototype = {
 	//osg.log(event);
 	if (event.keyCode === 39) {
 	    this._space.ctrl[1] = 1;
-	    this._space.ctrl[2]++; 
 	} else if (event.keyCode === 37) {
 	    this._space.ctrl[0] = 1;
-	    this._space.ctrl[2]++;
 	}
     },
 
