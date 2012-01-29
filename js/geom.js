@@ -351,7 +351,8 @@ BoidGeometry.prototype = {
 
     kill: function() {
         this.killme = true;
-        this.time = (new Date()).getTime()+1.0;
+        this.time = (new Date()).getTime()+this.duration;
+        this.duration = 2;
     },
 
     updatePosition: function(pos, vec, scale) {
@@ -372,7 +373,11 @@ BoidGeometry.prototype = {
 
         if (this.killme) {
             var t = (new Date()).getTime();
-            var dt = 1.0 - (this.time-t);
+            var dt = 1.0 - (this.time-t)/this.duration;
+            if (t > this.time) {
+                this.node.setNodeMask(0x0);
+                return;
+            }
             s = osgAnimation.EaseInCubic(dt);
         }
 
