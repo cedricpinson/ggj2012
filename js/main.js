@@ -69,45 +69,45 @@ var main = function() {
 	var eye;
 	var count;
         if (true) {
-        viewer.getManipulator().getInverseMatrix = function() {
-            var inv = osg.Matrix.makeIdentity([]);
-            if (Target && PlayerMe) {
-                
-                var FACTOR = 100;
+            viewer.getManipulator().getInverseMatrix = function() {
+                var inv = osg.Matrix.makeIdentity([]);
+                if (Target && PlayerMe) {
+                    
+                    var FACTOR = 100;
 
-                var mtx = Target.getWorldMatrices();
-                var pos = [];
-                osg.Matrix.getTrans(mtx[0], pos);
-		if (count === undefined) {
-		    count = PlayerMe.count+1 || 1;
-		} else {
-		    count -= (count-(PlayerMe.count+1||1))/FACTOR;
-		}
+                    var mtx = Target.getWorldMatrices();
+                    var pos = [];
+                    osg.Matrix.getTrans(mtx[0], pos);
+		    if (count === undefined) {
+		        count = PlayerMe.count+1 || 1;
+		    } else {
+		        count -= (count-(PlayerMe.count+1||1))/FACTOR;
+		    }
 
-		count = Math.min(count, 10);
+		    count = Math.min(count, 10);
 
-                if (eye === undefined) {
-		    eye = [];
-                    eye[0] = pos[0] - (20*PlayerMe.v[0]);
-                    eye[1] = pos[1] - (20*PlayerMe.v[1]);
-                    eye[2] = 10 + count*2;
-		} else {
-                    eye[0] -= (eye[0] - (pos[0] - ((10+count*2)*PlayerMe.v[0])))/FACTOR;
-                    eye[1] -= (eye[1] - (pos[1] - ((10+count*2)*PlayerMe.v[1])))/FACTOR;
-		    eye[2] = (10 + count*2);
-		}
+                    if (eye === undefined) {
+		        eye = [];
+                        eye[0] = pos[0] - (20*PlayerMe.v[0]);
+                        eye[1] = pos[1] - (20*PlayerMe.v[1]);
+                        eye[2] = 10 + count*2;
+		    } else {
+                        eye[0] -= (eye[0] - (pos[0] - ((10+count*2)*PlayerMe.v[0])))/FACTOR;
+                        eye[1] -= (eye[1] - (pos[1] - ((10+count*2)*PlayerMe.v[1])))/FACTOR;
+		        eye[2] = (10 + count*2);
+		    }
 
-                var up = [0, 0, 1];
-                //up[0] = PlayerMe.v[0];
-                //up[1] = PlayerMe.v[1];
-                //up[2] = 0;
-                osg.Matrix.makeLookAt(eye,
-                                      pos,
-                                      up, 
-                                      inv);
-            }
-            return inv;
-        };
+                    var up = [0, 0, 1];
+                    //up[0] = PlayerMe.v[0];
+                    //up[1] = PlayerMe.v[1];
+                    //up[2] = 0;
+                    osg.Matrix.makeLookAt(eye,
+                                          pos,
+                                          up, 
+                                          inv);
+                }
+                return inv;
+            };
         }
                     
 
