@@ -179,8 +179,8 @@ var createScene = function () {
 
     var bg = new osg.Node();
 
-    var size = CONF.space_width*1.5;
-    var plane = osg.createTexturedQuadGeometry(-size*0.5 + CONF.space_width/2, -CONF.space_height/2,-0.01,
+    var size = CONF.space_width*1.2;
+    var plane = osg.createTexturedQuadGeometry(-size*0.5 + CONF.space_width/2, -size*0.5 + CONF.space_height/2,-0.01,
                                                size,0,0,
                                                0,size,0);
 
