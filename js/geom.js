@@ -351,8 +351,8 @@ BoidGeometry.prototype = {
 
     kill: function(cb) {
         this.killme = true;
-        this.time = (new Date()).getTime()+this.duration;
         this.duration = 2;
+        this.time = (new Date()).getTime()/1000.0+this.duration;
         this.cb = cb;
     },
 
@@ -373,7 +373,7 @@ BoidGeometry.prototype = {
         }
 
         if (this.killme) {
-            var t = (new Date()).getTime();
+            var t = (new Date()).getTime()/1000.0;
             var dt = 1.0 - (this.time-t)/this.duration;
             if (t > this.time) {
                 if (this.cb) {
@@ -382,7 +382,7 @@ BoidGeometry.prototype = {
                 this.node.setNodeMask(0x0);
                 return;
             }
-            s = osgAnimation.EaseInCubic(dt);
+            s = 1.0-osgAnimation.EaseOutCubic(dt);
         }
 
         osg.Matrix.makeScale(s,s,s, mscale);
