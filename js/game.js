@@ -25,6 +25,38 @@ var CONF = {
 		 2: 75 }
 };
 
+var mn_lst = [
+    "#MonstreNote01",
+    "#MonstreNote02",
+    "#MonstreNote03",
+    "#MonstreNote04",
+    "#MonstreNote05",
+    "#MonstreNote06",
+    "#MonstreNote07",
+    "#MonstreNote08",
+    "#MonstreNote09",
+    "#MonstreNote10",
+    "#MonstreNote11",
+];
+
+var mr_lst = [
+    "#MonstreRire01",
+    "#MonstreRire02",
+    "#MonstreRire03",
+    "#MonstreRire04",
+    "#MonstreRire05",
+    "#MonstreRire06",
+    "#MonstreRire07",
+    "#MonstreRire08",
+    "#MonstreRire09",
+];
+
+var explosions = [
+    "#MonstreExplosionMini",
+    "#MonstreExplosionMoyen",
+    "#MonstreExplosionMaxi",
+]
+
 var chains = [];
 
 function killChain(b) {
@@ -146,7 +178,13 @@ function newBoid(id, x, y, u, v, color) {
 			    break;
 			}
 		    }
-		    
+
+		    var snd = mn_lst[Math.floor(Math.random()*mn_lst.length)]; 
+		    osg.log("PLAY "+snd);
+		    var audio = $(snd).get(0);
+		    audio.currentTime = 0;
+		    audio.play();
+
                     osg.log("LOCKED!");
                     return;
                 }
@@ -261,10 +299,27 @@ function newPlayer(id, x, y, u, v) {
 		if (d < CONF.white_kill_d) {
 		    if (b1.child) {
 			killChain(b1);
+			var snd = mr_lst[Math.floor(Math.random()*mr_lst.length)]; 
+			osg.log("PLAY "+snd);
+			var audio = $(snd).get(0);
+			audio.currentTime = 0;
+			audio.play();
 		    } else {
 			var c = chains.shift();
 			if (c) {
 			    killChain(c);
+			    var i=0;
+			    if (c.count > 4) {
+				i=1;
+			    } 
+			    if (c.count > 7) {
+				i=2;
+			    }
+			    var snd = explosions[i];
+			    osg.log("PLAY "+snd);
+			    var audio = $(snd).get(0);
+			    audio.currentTime = 0;
+			    audio.play();
 			}
 		    }
 		    b1.protect = true;
@@ -280,7 +335,7 @@ function newPlayer(id, x, y, u, v) {
 		    
 		    b1.child.parent = b2;
 		    b2.child = b1.child;
-		    
+		    b2.count = b1.count;
 		    chains.push(b2)
 		    
 		    delete b1.child;
