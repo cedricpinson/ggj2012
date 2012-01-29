@@ -11,7 +11,7 @@
   padding:0;
   margin:0;
   color: white;
-  background: rgb(107,107,107);
+  background: black; 
   }
 
   a:link {text-decoration: none; color: black;}
@@ -24,46 +24,39 @@
   }
 
   #Menu {
-    position: absolute;
-    top: 10;
-    left: 10;
-    z-index: 100;
-  width:100%;
+  position: absolute;
+  top: 10;
+  left: 10;
+  z-index: 101;
+  display: none;
+  color: white;
   }
 
-
-  #menu {
-  left: 0px;
-  top: 0px;
-  padding: 0;
-  margin:0;
-    z-index: 100;
-  width:100%;
+  #Menu a {
+  color: white;
+  opacity: 0.75;
   }
 
-  #menu-image {
-  padding:0;
-  margin:0;
-    position: absolute;
-    top: 0;
-    left: 0;
-  width:100%;
-  }
-
-  #Won {
+  #Won, #Levels, #Splash, #Credit {
   position: absolute;
   top: 0px;
   left: 0px;
   z-index: 100;
   display: none;
+  margin: 0 auto;
+  width: 1024;
   }
 
-  #Levels {
+  #Splash {
+  display: block;
+  }
+
+  #BG {
   position: absolute;
   top: 0px;
   left: 0px;
-  z-index: 100;
-  display: none;
+  z-index: 99;
+  background: black;
   }
 
 </style>
@@ -80,19 +73,17 @@
 </head>
 
 <body>
-  <ul id="Menu">
-    <li><a href="#" onClick="mainUpdate.initLevel('Level 1');">Level 1</a></li>
-    <li><a href="#" onClick="mainUpdate.initLevel('Level 2');">Level 2</a></li>
-    <li><a href="#" onClick="mainUpdate.initLevel('Level 3');">Level 3</a></li>
-  </ul>
-
-<!--
-  <div id="menu">
-    <img id="menu-image" src="menu.jpg">
+  <div id="Menu">
+    <h1><a href="#" onClick="mainUpdate.initLevel('Level 1');">Level 1</a> -
+    <a href="#" onClick="mainUpdate.initLevel('Level 2');">Level 2</a> -
+    <a href="#" onClick="mainUpdate.initLevel('Level 3');">Level 3</a> </h1>
   </div>
--->
+
+<div id="BG"></div>
+<img id="Splash" src="menu.jpg"/>
 <img id="Levels" src="data/levels.jpg"/>
 <img id="Won" src="data/won.jpg"/>
+<img id="Credit" src="credit.jpg"/>
 
   <div id="ViewContainer">
   <canvas id="3DView"></canvas>
@@ -100,7 +91,13 @@
 
 
   <audio id="Track01" autoplay="autoplay" loop="loop">
+    <source src="music/ogg/Classical Way Menu.ogg" />
+  </audio>
+  <audio id="Track02" loop="loop">
     <source src="music/ogg/Classical Way.ogg" />
+  </audio>
+  <audio id="WonMusic" >
+    <source src="music/ogg/Win.ogg" />
   </audio>
 
   <audio id="MonstreNote01">

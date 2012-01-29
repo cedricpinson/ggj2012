@@ -668,7 +668,10 @@ function newSpace() {
     
     space.youWon = function() {
 	osg.log("YOU WON");
-	$("#Won").show("slow");
+	$("#Won").fadeIn("slow");
+	$("#BG").fadeIn("slow");
+	$("#Track02").get(0).pause();
+	$("#WonMusic").get(0).play();
     };
     
     return space;
@@ -687,7 +690,12 @@ MainUpdate.prototype = {
 
     
     initLevel: function(id) {
-	$("#Menu").hide("slow");
+	$("#Menu").fadeOut("slow");
+	$("#BG").fadeOut("slow");
+	$("#Levels").fadeOut("slow");
+
+	$("#Track01").get(0).pause();
+	$("#Track02").get(0).play();
 
 	var space = this._space;
 	var produced = { 1: 0,

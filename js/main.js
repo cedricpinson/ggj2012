@@ -13,6 +13,27 @@ var main = function() {
     canvas.width = w;
     canvas.height = h;
 
+
+    $("#BG").css("width", $("body").width());
+    $("#BG").css("height", $("body").height());
+    $("#Splash").css("left", ($("body").width()/2) - ($("#Splash").width()/2));
+    $("#Levels").css("left", ($("body").width()/2) - ($("#Levels").width()/2));
+    $("#Credit").css("left", ($("body").width()/2) - ($("#Credit").width()/2));
+    $("#Won").css("left", ($("body").width()/2) - ($("#Levels").width()/2));
+    $("#Menu").css("top", 585);
+    $("#Menu").css("left", ($("body").width()/2) - ($("#Menu").width()/2));
+
+    $("#Splash").click(function() {
+	$("#Splash").fadeOut("slow");
+	$("#Levels").fadeIn("slow");
+	$("#Menu").fadeIn("slow");
+    });
+
+    $("#Won").click(function() {
+	$("#Credit").fadeIn("slow");
+	$("#Won").fadeOut();
+    });
+
     var stats = document.getElementById("Stats");
 
     var viewer;
@@ -221,7 +242,7 @@ var createScene = function () {
 	mainUpdate.playerInputDown(event);
     });
 
-    var audio = $("#Track01").get(0);
+    var audio = $("#Track02").get(0);
     audio.volume=0.5;
     audio.play();
 
