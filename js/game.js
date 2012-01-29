@@ -386,6 +386,74 @@ function newPlayer(id, x, y, u, v) {
         boid.newdir[2] = 0;
     };
 
+
+    var isWhiteInsideChain = function(chain) {
+        var start = chain;
+        var nb = 1;
+        var center = [ start.pos[0], start.pos[1], start.pos[2] ];
+        var next = start.child;
+        while (next !== start && next !== undefined) {
+            center[0] += next.pos[0];
+            center[1] += next.pos[1];
+            center[2] += next.pos[2];
+            nb += 1;
+            next = next.child;
+        }
+        
+        center[0] /= nb;
+        center[1] /= nb;
+        center[2] /= nb;
+        
+    };
+
+    var getPlayerLoopChain = function() {
+        
+        var getTail = function(boid) {
+            var tail = boid;
+            while (tail.child !== undefined) {
+                tail = tail.child;
+            }
+            return tail;
+        };
+
+        var attached = false;
+        for (var i = 0, l = chains.length; i < l; i++) {
+            var tail = getTail(boid);
+            var chain = chains[i];
+
+            var start = chain;
+            var nb = 1;
+            var center = [ start.pos[0], start.pos[1], start.pos[2] ];
+            var next = start.child;
+            while (next !== start && next !== undefined) {
+                center[0] += next.pos[0];
+                center[1] += next.pos[1];
+                center[2] += next.pos[2];
+                nb += 1;
+                next = next.child;
+            }
+            
+            center[0] /= nb;
+            center[1] /= nb;
+            center[2] /= nb;
+
+            var dir = [];
+            osg.Vec3.sub(center, tail.pos, dir);
+            if (osg.Vec3.length(dir) < 1) {
+	        start.locked = true;
+	        delete start.parent.anchor;
+                delete start.parent.child;
+                start.parent = tail;
+                tail.child = start;
+	        tail.locked = true;
+                start.speed = tail.speed;
+                attached = true;                
+            }
+        }
+        return attached;
+    };
+    boid.getPlayerLoopChain = getPlayerLoopChain;
+
     boid.update = function(dt, space, t) {
 	
 	var b1 = boid;
@@ -438,6 +506,12 @@ function newPlayer(id, x, y, u, v) {
 		    return;
 		}
 	    }
+
+            if (boid.getPlayerLoopChain()) {
+                return;
+            }
+
+
 	    
 	    if (b1.child && b2.anchor !== undefined && b2.child === undefined && b1.child !== b2 && b1.count > CONF.min_chain) {
 		if (osg.Vec3.length(osg.Vec3.sub(b1.pos, b2.anchor, [])) < CONF.boid_grap_dist) { // MAKE CHAIN
@@ -461,11 +535,18 @@ function newPlayer(id, x, y, u, v) {
 		    var audio = $('#Ahhh').get(0);   
 		    audio.currentTime = 0;
 		    audio.play();
+
+                    var whiteElements = isWhiteInsideChain(chain);
+                    osg.log("New chain with white elements");
+                    osg.log(whiteElements);
+
 		    
 		    return;
 		}
 	    }
 	}
+
+        
 
 	var ctrl = -space.ctrl[0] + space.ctrl[1];
 	//osg.log(ctrl);
