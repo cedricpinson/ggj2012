@@ -72,25 +72,26 @@ var main = function() {
             var inv = osg.Matrix.makeIdentity([]);
             if (Target && PlayerMe) {
                 
-                
+                var FACTOR = 100;
+
                 var mtx = Target.getWorldMatrices();
                 var pos = [];
                 osg.Matrix.getTrans(mtx[0], pos);
 		if (count === undefined) {
 		    count = PlayerMe.count+1 || 1;
 		} else {
-		    count -= (count-(PlayerMe.count+1||1))/50;
+		    count -= (count-(PlayerMe.count+1||1))/FACTOR;
 		}
 
                 if (eye === undefined) {
 		    eye = [];
                     eye[0] = pos[0] - (20*PlayerMe.v[0]);
                     eye[1] = pos[1] - (20*PlayerMe.v[1]);
-                    eye[2] = 5 + count*2;
+                    eye[2] = 10 + count*2;
 		} else {
-                    eye[0] -= (eye[0] - (pos[0] - ((10+count*4)*PlayerMe.v[0])))/50;
-                    eye[1] -= (eye[1] - (pos[1] - ((10+count*4)*PlayerMe.v[1])))/50;
-                    eye[2] = 10 + count*4;
+                    eye[0] -= (eye[0] - (pos[0] - ((10+count*2)*PlayerMe.v[0])))/FACTOR;
+                    eye[1] -= (eye[1] - (pos[1] - ((10+count*2)*PlayerMe.v[1])))/FACTOR;
+		    eye[2] = (10 + count*2);
 		}
 
                 var up = [0, 0, 1];
