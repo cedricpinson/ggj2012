@@ -70,11 +70,12 @@ function killChain(b) {
 	}
 	delete bb.parent;
 	delete bb.child;
+	delete bb.anchor;
+	bb.locked = false;
 	
-	if (bb.player !== true) {
+	if (bb.player == true) {
 	    setTimeout(function() {
-		bb.locked = false;
-		osg.log(bb.id+" unlocked");
+		bb.locked = true;
 	    }, CONF.chain_timer*1000);
 	}
 	return child;
