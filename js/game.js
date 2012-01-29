@@ -105,14 +105,13 @@ function killChain(b) {
 function updateExplode(boid, dt, t) {
 
     if (boid.explode) {
-        var myt = osgAnimation.EaseInCubic(Math.max(0.0,(boid.explodeTime-t)));
-        boid.pos[0] = boid.pos[0]+dt*40*myt*boid.explode[0];
-        boid.pos[1] = boid.pos[1]+dt*40*myt*boid.explode[1];
+        var myt = osgAnimation.EaseInQuad(Math.max(0.0,(boid.explodeTime-t)));
+        boid.pos[0] = boid.pos[0]+dt*20*myt*boid.explode[0];
+        boid.pos[1] = boid.pos[1]+dt*20*myt*boid.explode[1];
         boid.pos[2] = boid.pos[2]+dt*myt*boid.explode[2];
         if (boid.pos[2] < 0) {
             boid.pos[2] = 0;
         }
-        osg.log(boid.pos);
 
         if (t > boid.explodeTime ) {
             delete boid.explode;
