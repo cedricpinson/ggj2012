@@ -122,6 +122,7 @@ var createScene = function () {
     root.addChild(items);
     items.setNodeMask(1);
 
+    var bg = new osg.Node();
     
     var plane = osg.createTexturedQuadGeometry(0,0,-0.01,
                                                CONF.space_width,0,0,
@@ -132,7 +133,8 @@ var createScene = function () {
     texture.setWrapT(osg.Texture.CLAMP_TO_EDGE);
     var depth = new osg.Depth();
     depth.setWriteMask(false);
-    plane.getOrCreateStateSet().setAttributeAndMode(depth);
+    bg.getOrCreateStateSet().setAttributeAndMode(depth);
+
     texture.setImage(osgDB.readImage('data/bg.png'));
     var m = new osg.Material();
     m.setEmission([1,1,1,1]);
@@ -141,11 +143,15 @@ var createScene = function () {
     m.setSpecular([0,0,0,1]);
     plane.getOrCreateStateSet().setTextureAttributeAndMode(0, texture);
     plane.getOrCreateStateSet().setAttributeAndMode(m);
-
     plane.setNodeMask(2);
-    root.addChild(plane);
+
+    bg.addChild(plane);
+//    bg.addChild(createSkyBox());
+    
     plane.setName("plane");
     plane.itemToIntersect = {};
+
+    root.addChild(bg);
 
     mainUpdate = new MainUpdate();
     root.addUpdateCallback(mainUpdate);
