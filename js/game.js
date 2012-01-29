@@ -14,7 +14,7 @@ var CONF = {
     player_rot_max: 5.0,
     player_speed: 6.0,
     key_step: 1,
-    min_chain: 3,
+    min_chain: 4,
     chain_timer: 1.0,
 
     white_kill_d: 1.0,
@@ -28,13 +28,12 @@ var CONF = {
 
 var levels = {
     "Level 1" : { 1: 0,
-		  2: 10 },
+		  2: 75 },
     "Level 2" : { 1: 0,
-		  2: 20 },
+		  2: 75 },
     "Level 3" : { 1: 0,
-		  2: 45 },
-    "Level 4" : { 1: 0,
-		  2: 75 }
+		  2: 75 },
+
 };
 
 var mn_lst = [
@@ -522,10 +521,6 @@ function newPlayer(id, x, y, u, v) {
 
 		    //var count = Math.min(b2.count, 10);
 		    
-		    //for(var i = 0; i < b2.count; i++) {
-		    space.newRandomBoid(CONF.WHITE);
-		    //}
-
 		    delete b1.child;
 
 		    b1.locked = false;
@@ -541,7 +536,22 @@ function newPlayer(id, x, y, u, v) {
                     if (whiteElements.length > 0) {
                         osg.log("New chain with white elements");
                         osg.log(whiteElements);
-                    }
+			
+			space.boidsList = space.boidsList.filter(function(b) {
+			    return whiteElements.indexOf(b) === -1;
+			});
+			var bb;
+			while((bb = whiteElements.shift())) {
+			    if (bb) {
+				bb.pos = e[-1000, -1000, -1000];
+			    }
+			}
+			
+                    } else {
+			for(var i = 0; i < CONF.white_spawn; i++) {
+			    space.newRandomBoid(CONF.WHITE);
+			}
+		    }
 
 		    return;
 		}
@@ -650,6 +660,24 @@ MainUpdate.prototype = {
 	}
 
 	space.newRandomBoid(CONF.BLACK); // PLAYER
+	
+	switch(id) {
+	case "Level 1":
+	    CONF.white_spawn = 1;
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    break;
+	case "Level 2":
+	    CONF.white_spawn = 2;
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    break;
+	case "Level 3":
+	    CONF.white_spawn = 3;
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    space.newRandomBoid(CONF.WHITE); // WHITE
+	    break;	    
+	}
 	
 	genBoids(CONF.BLACK);
 	setTimeout(function() {
