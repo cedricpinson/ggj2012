@@ -349,10 +349,11 @@ var BoidGeometry = function(color, url) {
 
 BoidGeometry.prototype = {
 
-    kill: function() {
+    kill: function(cb) {
         this.killme = true;
         this.time = (new Date()).getTime()+this.duration;
         this.duration = 2;
+        this.cb = cb;
     },
 
     updatePosition: function(pos, vec, scale) {
@@ -375,6 +376,9 @@ BoidGeometry.prototype = {
             var t = (new Date()).getTime();
             var dt = 1.0 - (this.time-t)/this.duration;
             if (t > this.time) {
+                if (this.cb) {
+                    this.cb();
+                }
                 this.node.setNodeMask(0x0);
                 return;
             }
