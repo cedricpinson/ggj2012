@@ -18,13 +18,13 @@ var main = function() {
     var viewer;
   //  try {
     viewer = new osgViewer.Viewer(canvas, {antialias : true, alpha: true, premult: false });
-        viewer.init();
+    viewer.init();
     Viewer = viewer;
-        var rotate = new osg.MatrixTransform();
+    var rotate = new osg.MatrixTransform();
     var root = createScene();
-        rotate.addChild(root);
-        viewer.getCamera().setClearColor([0.0, 0.0, 0.0, 0.0]);
-    osg.Matrix.makePerspective(50, window.innerWidth/window.innerHeight, 1.0, 100.0, viewer.getCamera().getProjectionMatrix());
+    rotate.addChild(root);
+    viewer.getCamera().setClearColor([0.0, 0.0, 0.0, 0.0]);
+    osg.Matrix.makePerspective(50, window.innerWidth/window.innerHeight, 1.0, 200.0, viewer.getCamera().getProjectionMatrix());
     viewer.getCamera().setComputeNearFar(false);
 
 
@@ -68,6 +68,7 @@ var main = function() {
 
 	var eye;
 	var count;
+        if (true) {
         viewer.getManipulator().getInverseMatrix = function() {
             var inv = osg.Matrix.makeIdentity([]);
             if (Target && PlayerMe) {
@@ -105,6 +106,7 @@ var main = function() {
             }
             return inv;
         };
+        }
                     
 
         root.addUpdateCallback(new UpdateCameraInverseMatrix());
@@ -185,7 +187,7 @@ var createScene = function () {
     texture.setWrapS(osg.Texture.CLAMP_TO_EDGE);
     texture.setWrapT(osg.Texture.CLAMP_TO_EDGE);
     var depth = new osg.Depth();
-    depth.setWriteMask(false);
+    //depth.setWriteMask(false);
     bg.getOrCreateStateSet().setAttributeAndMode(depth);
 
     texture.setImage(osgDB.readImage('data/bg.png'));

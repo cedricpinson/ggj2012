@@ -127,6 +127,21 @@ function updateExplode(boid, dt, t) {
     return false;
 }
 
+var BoidLevel = {
+    "data/stop.osgjs": 0,
+    "data/bilboquet.osgjs": 1,
+    "data/bite.osgjs": 2,
+    "data/arbre.osgjs": 3,
+    "data/blob.osgjs": 4,
+    "data/calebasse.osgjs": 5,
+    "data/cromosome.osgjs": 6,
+    "data/hero.osgjs": 7,
+    "data/gamin.osgjs": 8,
+    "data/goo.osgjs": 9,
+    "data/tomb.osgjs": 10,
+    "data/tulip.osgjs": 11
+};
+
 function newBoid(id, x, y, u, v, color, url) {
     var col = color == CONF.WHITE ? "white" : "black";
     var g = new BoidGeometry(col, url);
@@ -136,7 +151,8 @@ function newBoid(id, x, y, u, v, color, url) {
 	v: [ u, v, 0 ],
 	speed: CONF.boid_speed,
         geom: g,
-	color: color
+	color: color,
+        power: 0
     };
     boid.originalSpeed = CONF.boid_speed;
 
