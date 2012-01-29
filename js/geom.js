@@ -228,6 +228,19 @@ var getRandomModel = function(color, url) {
 	loadModel("data/tulip.osgjs");	
     }
     var node = new osg.Node();
+
+    var lst = [
+	"data/stop.osgjs",
+	"data/arbre.osgjs",
+	"data/bilboquet.osgjs",
+	"data/blob.osgjs",
+	"data/calebasse.osgjs",
+	"data/cromosome.osgjs",
+	"data/gamin.osgjs",
+	"data/goo.osgjs",
+	"data/tulip.osgjs"
+    ];
+
     var keys = Object.keys(loadModel.models);
     var index = Math.floor((Math.random() * keys.length));
     
@@ -236,7 +249,7 @@ var getRandomModel = function(color, url) {
 	selected = url;
     } else {
 	if (color === "white") {
-	    selected = "data/cromosome.osgjs";
+	    selected = lst[Math.floor(Math.random()*lst.length)];
 	} else {
 	    selected = "data/tomb.osgjs";
 	}
