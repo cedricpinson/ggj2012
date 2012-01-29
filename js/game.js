@@ -265,7 +265,6 @@ function newBoid(id, x, y, u, v, color, url) {
 		    audio.currentTime = 0;
 		    audio.play();
 
-                    osg.log("LOCKED!");
                     return;
                 }
             }
@@ -472,7 +471,7 @@ function newPlayer(id, x, y, u, v) {
 			killChain(b1);
 			b1.count = 0;
 			var snd = mr_lst[Math.floor(Math.random()*mr_lst.length)]; 
-			osg.log("PLAY "+snd);
+			//osg.log("PLAY "+snd);
 			var audio = $(snd).get(0);
 			audio.currentTime = 0;
 			audio.play();
@@ -480,7 +479,7 @@ function newPlayer(id, x, y, u, v) {
 			var c = chains.shift();
 			if (c) {
 			    score -= c.count;
-			    osg.log(score);
+			    //osg.log(score);
 			    killChain(c);
 			    var i=0;
 			    if (c.count > 4) {
@@ -490,7 +489,7 @@ function newPlayer(id, x, y, u, v) {
 				i=2;
 			    }
 			    var snd = explosions[i];
-			    osg.log("PLAY "+snd);
+			    //osg.log("PLAY "+snd);
 			    var audio = $(snd).get(0);
 			    audio.currentTime = 0;
 			    audio.play();
@@ -517,7 +516,7 @@ function newPlayer(id, x, y, u, v) {
 		    chains.unshift(b2);
 		    
 		    score += b2.count;
-		    osg.log(score);
+		    //osg.log(score);
 
 		    //var count = Math.min(b2.count, 10);
 		    
@@ -538,17 +537,17 @@ function newPlayer(id, x, y, u, v) {
                         osg.log(whiteElements);
 			
 			var bb;
-
-			function wE(bb) {
-			    if (bb) {
-				bb.geom.kill(function(){
-				    bb.toDelete = true;
-				});
-			    }
+			
+			function wE(b) {
+			    b.geom.kill(function(){
+				b.toDelete = true;
+			    });
 			}
 			
 			while((bb = whiteElements.shift())) {
-			    wE(bb);
+			    if (bb) {
+				wE(bb);
+			    }
 			}
 			
                     } else {
