@@ -249,9 +249,9 @@ var getRandomModel = function(color, url) {
 	selected = url;
     } else {
 	if (color === "white") {
-	    selected = lst[Math.floor(Math.random()*lst.length)];
-	} else {
-	    selected = "data/tomb.osgjs";
+            selected = lst[Math.floor(Math.random()*lst.length)];
+        } else {
+            selected = "data/tomb.osgjs";
 	}
     }
 
@@ -286,6 +286,27 @@ var getMonsterDefault2 = function() {
     });
     return model;
 };
+
+var KillCallback = function() {
+};
+
+KillCallback.prototype = {
+    update: function(node, nv) {
+        var t = nv.getFrameStamp().getSimulationTime();
+        if (node.killing === undefined) {
+            node.killing = t;
+        }
+        var dt = t - node.killing;
+        var scale = osgAnimation.EaseInCubic(dt);
+        osg.Matrix.makeScale(scale, scale, scale, []);
+        
+        osg.Matrix.preMult(node.getMatrix(),scale);
+        return true;
+    }
+};
+
+
+
 
 var BoidGeometry = function(color, url) {
     var mt = new osg.MatrixTransform();
@@ -327,6 +348,12 @@ var BoidGeometry = function(color, url) {
 };
 
 BoidGeometry.prototype = {
+
+    kill: function() {
+        this.killme = true;
+        this.time = (new Date()).getTime();
+    },
+
     updatePosition: function(pos, vec, scale) {
         //osg.log(pos);
         this.node.dirtyBound();
@@ -342,6 +369,13 @@ BoidGeometry.prototype = {
         if (scale !== undefined) {
             s = osgAnimation.EaseOutElastic(1.0-scale);
         }
+
+        if (this.killme) {
+            var t = (new Date()).getTime();
+            var dt = (t-this.time);
+            s = osgAnimation.EaseInCubic(dt);
+        }
+
         osg.Matrix.makeScale(s,s,s, mscale);
 
         osg.Matrix.makeLookAt(pos, target,[0,0,1], l);
@@ -350,5 +384,7 @@ BoidGeometry.prototype = {
         osg.Matrix.preMult(this.node.getMatrix(),mscale);
         //osg.Matrix.makeTranslate(pos[0], pos[1], pos[2], this.node.getMatrix());
     }
+
+    
 };
 
