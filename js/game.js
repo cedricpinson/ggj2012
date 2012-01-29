@@ -250,8 +250,21 @@ function newBoid(id, x, y, u, v, color) {
 	b.v[2] = 0.0;
 	osg.Vec3.normalize(b.v, b.v);
         var v = osg.Vec3.mult(b.v, dt*b.speed, []);
-        osg.Vec3.add(b.pos, v, b.pos);
+        var next = osg.Vec3.add(b.pos, v, []);
+
+	var dir = osg.Vec3.sub(next, [space.width/2, space.height/2, 0], [])
+	var d = osg.Vec3.length(dir);
+
+	if (d > space.width/2) {
+	    osg.Vec3.sub(b.v, osg.Vec3.mult(osg.Vec3.normalize(dir, []), dt*b.speed, []), b.v);
+	    var next = osg.Vec3.add(b.pos, v, []);
+	}
 	
+
+	b.pos = next;
+	
+
+	/*
 	// X boundary
 	if (b.pos[0] > space.width) {
 	    b.pos[0] -= space.width;
@@ -265,7 +278,7 @@ function newBoid(id, x, y, u, v, color) {
 	} else if (b.pos[1] < 0) {
 	    b.pos[1] += space.height;
 	}
-	
+	*/
 	b.pos[2] = 0.0;
 
 	if (b.locked === true) {
