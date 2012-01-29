@@ -107,20 +107,20 @@ function updateExplode(boid, dt, t) {
 
     if (boid.explode) {
         var myt = osgAnimation.EaseInQuad(Math.max(0.0,(boid.explodeTime-t)));
-        boid.pos[0] = boid.pos[0]+dt*30*myt*boid.explode[0];
-        boid.pos[1] = boid.pos[1]+dt*30*myt*boid.explode[1];
+        boid.pos[0] = boid.pos[0]+dt*30*myt*myt*boid.explode[0];
+        boid.pos[1] = boid.pos[1]+dt*30*myt*myt*boid.explode[1];
         boid.pos[2] = boid.pos[2]; //+dt*20*myt*boid.explode[2] - 9.81*dt;
 
         //myt = osgAnimation.EaseOutQuad(Math.max(0.0,(boid.explodeTime-t)));
         boid.v[0] = boid.srcdir[0] + (1.0-myt)*(boid.newdir[0]-boid.srcdir[0]);
         boid.v[1] = boid.srcdir[1] + (1.0-myt)*(boid.newdir[1]-boid.srcdir[1]);
         boid.v[2] = 0.0;
+
         osg.Vec3.normalize(boid.v, boid.v);
 
         if (t > boid.explodeTime ) {
             delete boid.explode;
         }
-
         return true;
     }
 
@@ -138,6 +138,7 @@ function newBoid(id, x, y, u, v, color, url) {
         geom: g,
 	color: color
     };
+    boid.originalSpeed = CONF.boid_speed;
 
     boid.update = function(dt, space, t) {
 	var b1 = boid;
@@ -279,6 +280,12 @@ function newBoid(id, x, y, u, v, color, url) {
             return;
         }
 
+        b.speed += dt*boid.originalSpeed;
+        if (b.parent) {
+            b.speed = Math.min(b.speed, boid.parent.speed);
+        } else {
+            b.speed = Math.min(b.speed, boid.originalSpeed);
+        }
 
 	osg.Vec3.normalize(b.v, b.v);
         var v = osg.Vec3.mult(b.v, dt*b.speed, []);
@@ -336,6 +343,7 @@ boid.computeAnchorPosition = function(position, result) {
 
 function newPlayer(id, x, y, u, v) {
     var boid = newBoid(id, x, y, u, v, CONF.BLACK, "data/bite.osgjs");
+    boid.originalSpeed = CONF.player_speed;
     boid.speed = CONF.player_speed;
     boid.vTo = [ boid.v[0], boid.v[1], boid.v[2] ];
     boid.locked = true;
@@ -349,6 +357,8 @@ function newPlayer(id, x, y, u, v) {
         boid.explode = diff;
         boid.newdir = [];
         boid.srcdir = [];
+
+        boid.speed = 0;
 
         boid.srcdir[0] = boid.v[0];
         boid.srcdir[1] = boid.v[1];
@@ -369,7 +379,7 @@ function newPlayer(id, x, y, u, v) {
 	    }
 	    
 	    if (b1.protect !== true && b2.color === CONF.WHITE) {
-		var dir = osg.Vec3.sub(b1.pos, b2.pos, []);         
+		var dir = osg.Vec3.sub(b1.pos, b2.pos, []);
 		var d = osg.Vec3.length(dir);
 		if (d < CONF.white_kill_d) {
 		    if (b1.child) {
@@ -380,8 +390,6 @@ function newPlayer(id, x, y, u, v) {
 			var audio = $(snd).get(0);
 			audio.currentTime = 0;
 			audio.play();
-                        explode(b2.pos, b1);
-                        b1.explodeTime = t+1.0;
 		    } else {
 			var c = chains.shift();
 			if (c) {
@@ -400,6 +408,9 @@ function newPlayer(id, x, y, u, v) {
 			    audio.play();
 			}
 		    }
+                    explode(b2.pos, b1);
+                    b1.explodeTime = t+1.0;
+
 		    b1.protect = true;
 		    setTimeout(function() {
 			b1.protect = false;
