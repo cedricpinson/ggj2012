@@ -124,6 +124,7 @@ var loadModel = function(url) {
                 "attribute vec2 TexCoord1;",
                 "varying vec2 FragTexCoord0;",
                 "uniform mat4 ModelViewMatrix;",
+                "//uniform mat4 CameraInverseMatrix;",
                 "uniform mat4 ProjectionMatrix;",
                 "void main(void) {",
                 "  gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(Vertex,1.0);",
@@ -138,6 +139,7 @@ var loadModel = function(url) {
                 "#endif",
                 "uniform sampler2D Texture1;",
                 "varying vec2 FragTexCoord0;",
+
 
                 "void main() {",
                 "  vec4 c = texture2D(Texture1, FragTexCoord0);",
@@ -173,6 +175,11 @@ var loadModel = function(url) {
                 loadModel.shadowShader = getShadowShader();
             }
 
+            if (loadModel.depth === undefined) {
+                loadModel.depth = new osg.Depth();
+                loadModel.depth.setWriteMask(false);
+            }
+
             var eyeFinder = new FindEye();
             var stateSet;
             model.accept(eyeFinder);
@@ -193,10 +200,6 @@ var loadModel = function(url) {
                 stateSet.setAttributeAndMode(loadModel.shadowShader);
                 stateSet.addUniform(osg.Uniform.createInt1(1,"Texture1"));
                 stateSet.setRenderingHint('TRANSPARENT_BIN');
-                if (loadModel.depth === undefined) {
-                    loadModel.depth = new osg.Depth();
-                    loadModel.depth.setWriteMask(false);
-                }
                 stateSet.setAttributeAndMode(loadModel.depth);
             }
 
