@@ -26,6 +26,27 @@ var url = function() {
 
 };
 
+
+var startGamePage = function() {
+    $("#MainMenu").fadeOut("slow");
+    $("#Splash").fadeOut("slow");
+    $("#Levels").fadeIn("slow");
+    $("#Menu").fadeIn("slow");
+};
+
+var creditsPage = function() {
+
+    $("#Credit").fadeIn("slow");
+    $("#TeamCredits").fadeIn("slow");
+    $("#MainMenu").fadeOut("slow");
+    $("#Splash").fadeOut("slow");
+    $("#Won").fadeOut();
+
+    $("#Credit").click(function() {
+        document.location.url.reload(true);
+    });
+};
+
 var main = function() {
 
     var canvas = document.getElementById("3DView");
@@ -37,15 +58,8 @@ var main = function() {
     canvas.width = w;
     canvas.height = h;
 
-    $("#Splash").click(function() {
-	$("#Splash").fadeOut("slow");
-	$("#Levels").fadeIn("slow");
-	$("#Menu").fadeIn("slow");
-    });
-
     $("#Won").click(function() {
-	$("#Credit").fadeIn("slow");
-	$("#Won").fadeOut();
+        creditsPage();
     });
 
     var stats = document.getElementById("Stats");
@@ -197,7 +211,7 @@ var main = function() {
 
     }
 
-        viewer.run();
+//        viewer.run();
 
     viewer.getManipulator().keyup = function(event) {
 	mainUpdate.playerInputUp(event);};

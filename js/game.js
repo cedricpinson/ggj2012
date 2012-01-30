@@ -690,6 +690,8 @@ MainUpdate.prototype = {
 
     
     initLevel: function(id) {
+        Viewer.run();
+
 	$("#Splash").fadeOut("slow");
 	$("#Menu").fadeOut("slow");
 	$("#BG").fadeOut("slow");

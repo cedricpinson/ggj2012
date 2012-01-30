@@ -12,6 +12,8 @@
   margin:0;
   color: white;
   background: black; 
+
+  font-family: 'Asap', sans-serif;
   }
 
   a:link {text-decoration: none; color: black;}
@@ -32,12 +34,86 @@
   color: white;
   left:50%;
   margin-left: -200px;
-  top: 580px;
+  top: 600px;
+  font-size: 2em;
+  font-weight: bold;
   }
 
   #Menu a {
   color: white;
-  opacity: 0.75;
+  opacity: 0.7;
+  }
+
+  #Menu a:hover {
+  color: white;
+  opacity: .95;
+  text-decoration: none;
+  }
+
+
+  #MainMenu {
+  position: absolute;
+  font-weight: bold;
+  z-index: 101;
+  color: rgba(255,255,255,0.7);
+  top: 540px;
+  width: 1024px;
+  left: 50%;
+  margin-left: -512px;
+  text-align:center;
+  font-size: 3em;
+  }
+
+  #MainMenu a:hover {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  }
+  #MainMenu a {
+  color: rgba(255,255,255,0.3);
+  }
+
+
+  #TeamCredits {
+  position: absolute;
+  z-index: 101;
+  top: 460px;
+  width: 1024px;
+  left: 50%;
+  margin-left: -512px;
+  text-align:center;
+  font-size: 1em;
+  display:none;
+  font-family: 'Signika Negative', sans-serif;
+  color: rgba(255,255,255,0.6);
+  }
+
+
+  .credit_link_hover a:hover {
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  }
+  .credit_link a {  
+  color: rgba(255,255,255,0.6);
+  }
+
+  #TeamCredits div {
+  position: absolute;
+  }
+
+  #CreditsMarc {
+  left:94px;
+  }
+  #CreditsCedric {
+  left: 275px;
+  }
+  #CreditsFred {
+  left: 480px;
+  }
+  #CreditsJohan {
+  left: 662px;
+  }
+  #CreditsMaomi {
+  left: 845px;
   }
 
   #Won, #Levels, #Splash, #Credit {
@@ -73,20 +149,59 @@
 <script type="text/javascript" src="js/geom.js"></script>
 <script type="text/javascript" src="js/filter.js"></script>
 <script type="text/javascript" src="js/skybox.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Asap' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Signika+Negative' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
   <div id="Menu">
-    <h1><a href="#" onClick="mainUpdate.initLevel('Level 1');">Level 1</a> -
+    <a href="#" onClick="mainUpdate.initLevel('Level 1');">Level 1</a> -
     <a href="#" onClick="mainUpdate.initLevel('Level 2');">Level 2</a> -
-    <a href="#" onClick="mainUpdate.initLevel('Level 3');">Level 3</a> </h1>
+    <a href="#" onClick="mainUpdate.initLevel('Level 3');">Level 3</a>
   </div>
+
+  <div id="MainMenu">
+    <a href="#" onClick="startGamePage();">Start</a><br>
+    <a href="#" onClick="creditsPage();">Credits</a>
+  </div>
+
+  <div id="TeamCredits" class="credit_link credit_link_hover">
+  <div id="CreditsMarc">
+    Code<br>
+    <a href="https://twitter.com/#!/corpsmoderne" >@corpsmoderne</a>
+  </div>
+
+  <div id="CreditsCedric">
+    Code<br>
+    <a href="https://cedricpinson.com" >cedricpinson.com</a><br>
+    <a href="https://twitter.com/#!/trigrou" >@trigrou</a>
+  </div>
+
+  <div id="CreditsFred">
+    Sounds<br>
+    Frédéric Sommer<br>
+    <a href="https://www.lecortex.com" >www.lecortex.com</a>
+  </div>
+
+  <div id="CreditsJohan">
+    3D artists<br>
+    Johan Spielmann<br>
+    <a href="https://twitter.com/#!/lecortex" >@lecortex</a>
+  </div>
+
+  <div id="CreditsMaomi">
+    Design<br>
+    Chen Zou<br>
+    <a href="https://twitter.com/#!/maomi" >@maomi</a>
+  </div>
+  </div>
+
 
 <div id="BG"></div>
 <img id="Splash" src="menu.jpg"/>
 <img id="Levels" src="data/levels.jpg"/>
 <img id="Won" src="data/won.jpg"/>
-<img id="Credit" src="credit.jpg"/>
+<img id="Credit" src="data/credit2.jpg"/>
 
   <div id="ViewContainer">
   <canvas id="3DView"></canvas>
