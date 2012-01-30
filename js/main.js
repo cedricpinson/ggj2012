@@ -3,7 +3,31 @@ var Viewer;
 var Target;
 var PlayerMe;
 
+
+function getUrlVars()
+{
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+}
+
+var url = function() {
+    var vars = getUrlVars();
+    osg.log(vars);
+    if (vars.level !== undefined) {
+        mainUpdate.initLevel('Level '+ vars.level.toString());
+    }
+
+};
+
 var main = function() {
+
     var canvas = document.getElementById("3DView");
     var w = window.innerWidth;
     var h = window.innerHeight;
@@ -12,16 +36,6 @@ var main = function() {
     canvas.style.height = h;
     canvas.width = w;
     canvas.height = h;
-
-
-    $("#BG").css("width", $("body").width());
-    $("#BG").css("height", $("body").height());
-    $("#Splash").css("left", ($("body").width()/2) - ($("#Splash").width()/2));
-    $("#Levels").css("left", ($("body").width()/2) - ($("#Levels").width()/2));
-    $("#Credit").css("left", ($("body").width()/2) - ($("#Credit").width()/2));
-    $("#Won").css("left", ($("body").width()/2) - ($("#Levels").width()/2));
-    $("#Menu").css("top", 585);
-    $("#Menu").css("left", ($("body").width()/2) - ($("#Menu").width()/2));
 
     $("#Splash").click(function() {
 	$("#Splash").fadeOut("slow");
@@ -190,6 +204,9 @@ var main = function() {
 
     viewer.getManipulator().keydown = function(event) {
 	mainUpdate.playerInputDown(event);};
+
+
+    url();
 
 
 

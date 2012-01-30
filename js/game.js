@@ -690,9 +690,11 @@ MainUpdate.prototype = {
 
     
     initLevel: function(id) {
+	$("#Splash").fadeOut("slow");
 	$("#Menu").fadeOut("slow");
 	$("#BG").fadeOut("slow");
 	$("#Levels").fadeOut("slow");
+	$("#ViewContainer").fadeIn();
 
 	$("#Track01").get(0).pause();
 	$("#Track02").get(0).play();
