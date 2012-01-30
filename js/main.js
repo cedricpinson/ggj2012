@@ -27,6 +27,14 @@ var url = function() {
 };
 
 
+var goToMainMenu = function() {
+    $("#Credit").fadeOut("slow");
+    $("#TeamCredits").fadeOut("slow");
+    $("#MainMenu").fadeIn("slow");
+    $("#Splash").fadeIn("slow");
+    $("#Won").fadeOut();
+};
+
 var startGamePage = function() {
     $("#MainMenu").fadeOut("slow");
     $("#Splash").fadeOut("slow");
@@ -41,10 +49,6 @@ var creditsPage = function() {
     $("#MainMenu").fadeOut("slow");
     $("#Splash").fadeOut("slow");
     $("#Won").fadeOut();
-
-    $("#Credit").click(function() {
-        document.location.url.reload(true);
-    });
 };
 
 var main = function() {
@@ -59,7 +63,7 @@ var main = function() {
     canvas.height = h;
 
     $("#Won").click(function() {
-        creditsPage();
+        document.location.url.reload(true);
     });
 
     var stats = document.getElementById("Stats");

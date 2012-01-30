@@ -33,15 +33,16 @@
   display: none;
   color: white;
   left:50%;
-  margin-left: -200px;
+  margin-left: -205px;
   top: 600px;
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: bold;
+  font-family: 'Montserrat', sans-serif;
   }
 
   #Menu a {
   color: white;
-  opacity: 0.7;
+  opacity: 0.5;
   }
 
   #Menu a:hover {
@@ -62,6 +63,7 @@
   margin-left: -512px;
   text-align:center;
   font-size: 3em;
+  font-family: 'Montserrat', sans-serif;
   }
 
   #MainMenu a:hover {
@@ -115,6 +117,20 @@
   left: 845px;
   }
 
+  #back {
+  font-family: 'Montserrat', sans-serif;
+  top: 180px;
+  width: 1024px;
+  margin-left: -512px;
+  left: 50%;
+  font-size: 3em;
+  };
+
+  #TeamCredits_back {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  }
+
   #Won, #Levels, #Splash, #Credit {
   position:absolute;
   z-index: 100;
@@ -148,8 +164,8 @@
 <script type="text/javascript" src="js/geom.js"></script>
 <script type="text/javascript" src="js/filter.js"></script>
 <script type="text/javascript" src="js/skybox.js"></script>
-<link href='http://fonts.googleapis.com/css?family=Asap' rel='stylesheet' type='text/css'>
 <link href='http://fonts.googleapis.com/css?family=Signika+Negative' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -192,6 +208,10 @@
     Design<br>
     Chen Zou<br>
     <a href="https://twitter.com/#!/maomi" >@maomi</a>
+  </div>
+
+  <div id="back">
+    <a href="#" onClick="goToMainMenu();">back</a>
   </div>
   </div>
 
