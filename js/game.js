@@ -693,6 +693,7 @@ MainUpdate.prototype = {
         Viewer.run();
 
 	$("#Splash").fadeOut("slow");
+	$("#MainMenu").fadeOut("slow");
 	$("#Menu").fadeOut("slow");
 	$("#BG").fadeOut("slow");
 	$("#Levels").fadeOut("slow");
