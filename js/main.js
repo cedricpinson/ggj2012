@@ -185,6 +185,14 @@ var main = function() {
 
         viewer.run();
 
+    viewer.getManipulator().keyup = function(event) {
+	mainUpdate.playerInputUp(event);};
+
+    viewer.getManipulator().keydown = function(event) {
+	mainUpdate.playerInputDown(event);};
+
+
+
  /*   } catch (er) {
         osg.log("exception in osgViewer " + er);
         alert("exception in osgViewer " + er);
@@ -235,13 +243,6 @@ var createScene = function () {
     mainUpdate = new MainUpdate();
     root.addUpdateCallback(mainUpdate);
     
-    $('body').keyup(function(event) {
-	mainUpdate.playerInputUp(event);
-    });
-    $('body').keydown(function(event) {
-	mainUpdate.playerInputDown(event);
-    });
-
     var audio = $("#Track02").get(0);
     audio.volume=0.5;
     audio.play();
