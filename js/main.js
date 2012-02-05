@@ -63,7 +63,7 @@ var main = function() {
     canvas.height = h;
 
     $("#Won").click(function() {
-        document.location.url.reload(true);
+        document.location.reload();
     });
 
     var stats = document.getElementById("Stats");

@@ -668,6 +668,7 @@ function newSpace() {
     
     space.youWon = function() {
 	osg.log("YOU WON");
+        $("#ViewContainer").fadeOut();
 	$("#Won").fadeIn("slow");
 	$("#BG").fadeIn("slow");
 	$("#Track02").get(0).pause();
