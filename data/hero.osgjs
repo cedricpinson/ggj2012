@@ -126,7 +126,7 @@
                             "TextureAttributeList": [ [  ],
                             [ {
                               "osg.Texture": {
-                                "File": "shadow.png", 
+                                "File": "data/shadow.png", 
                                 "MagFilter": "LINEAR", 
                                 "MinFilter": "LINEAR_MIPMAP_LINEAR", 
                                 "WrapS": "REPEAT", 

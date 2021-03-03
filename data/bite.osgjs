@@ -103,7 +103,7 @@
                             "TextureAttributeList": [ [  ],
                             [ {
                               "osg.Texture": {
-                                "File": "eye.png", 
+                                "File": "data/eye.png", 
                                 "MagFilter": "LINEAR", 
                                 "MinFilter": "LINEAR_MIPMAP_LINEAR", 
                                 "WrapS": "REPEAT", 
@@ -192,7 +192,7 @@
                             "TextureAttributeList": [ [  ],
                             [ {
                               "osg.Texture": {
-                                "File": "shadow.png", 
+                                "File": "data/shadow.png", 
                                 "MagFilter": "LINEAR", 
                                 "MinFilter": "LINEAR_MIPMAP_LINEAR", 
                                 "WrapS": "REPEAT", 

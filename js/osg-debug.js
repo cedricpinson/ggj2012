@@ -87,20 +87,20 @@ osg.extend = function () {
 	if ( !obj || toString.call(obj) !== "[object Object]" || obj.nodeType || obj.setInterval ) {
             return false;
 	}
-	
+
 	// Not own constructor property must be Object
-	if ( obj.constructor && 
-             !hasOwnPropertyFunc.call(obj, "constructor") && 
+	if ( obj.constructor &&
+             !hasOwnPropertyFunc.call(obj, "constructor") &&
              !hasOwnPropertyFunc.call(obj.constructor.prototype, "isPrototypeOf") ) {
             return false;
 	}
-	
+
 	// Own properties are enumerated firstly, so to speed up,
 	// if last one is own, then all properties are own.
-	
+
 	var key;
 	for ( key in obj ) {}
-	
+
 	return key === undefined || hasOwnPropertyFunc.call( obj, key );
     };
 
@@ -221,7 +221,7 @@ osg.Vec2 = {
         return Math.sqrt( a[0]*a[0] + a[1]* a[1]);
     },
 
-    /** 
+    /**
         normalize an Array of 2 elements and write it in r
      */
     normalize: function(a, r) {
@@ -237,8 +237,8 @@ osg.Vec2 = {
         return r;
     },
 
-    /** 
-        Compute the dot product 
+    /**
+        Compute the dot product
     */
     dot: function(a, b) {
         return a[0]*b[0]+a[1]*b[1];
@@ -426,7 +426,7 @@ osg.Vec4 = {
 };
 /** -*- compile-command: "jslint-cli Object.js" -*- */
 
-/** 
+/**
  *  Object class
  *  @class Object
  */
@@ -475,7 +475,7 @@ osg.Matrix = {
     makeIdentity: function(matrix) {
         if (matrix === undefined) {
             matrix = [];
-            osg.log("osg.Matrix.makeIdentity without matrix destination is deprecated"); 
+            osg.log("osg.Matrix.makeIdentity without matrix destination is deprecated");
         }
         osg.Matrix.setRow(matrix, 0,    1, 0, 0, 0 );
         osg.Matrix.setRow(matrix, 1,    0, 1, 0, 0 );
@@ -879,27 +879,27 @@ osg.Matrix = {
             /* perform instant calculation */
             quatResult[3] = tq[0];
             quatResult[0] = mat[1*4+2]-mat[2*4+1];
-            quatResult[1] = mat[2*4+0]-mat[0  +2]; 
-            quatResult[2] = mat[0  +1]-mat[1*4+0]; 
+            quatResult[1] = mat[2*4+0]-mat[0  +2];
+            quatResult[2] = mat[0  +1]-mat[1*4+0];
         }
         else if (j==1)
         {
-            quatResult[3] = mat[1*4+2]-mat[2*4+1]; 
+            quatResult[3] = mat[1*4+2]-mat[2*4+1];
             quatResult[0] = tq[1];
-            quatResult[1] = mat[0  +1]+mat[1*4+0]; 
+            quatResult[1] = mat[0  +1]+mat[1*4+0];
             quatResult[2] = mat[2*4+0]+mat[0  +2];
         }
         else if (j==2)
         {
-            quatResult[3] = mat[2*4+0]-mat[0+2]; 
-            quatResult[0] = mat[0  +1]+mat[1*4+0]; 
+            quatResult[3] = mat[2*4+0]-mat[0+2];
+            quatResult[0] = mat[0  +1]+mat[1*4+0];
             quatResult[1] = tq[2];
-            quatResult[2] = mat[1*4+2]+mat[2*4+1]; 
+            quatResult[2] = mat[1*4+2]+mat[2*4+1];
         }
         else /* if (j==3) */
         {
-            quatResult[3] = mat[0  +1]-mat[1*4+0]; 
-            quatResult[0] = mat[2*4+0]+mat[0  +2]; 
+            quatResult[3] = mat[0  +1]-mat[1*4+0];
+            quatResult[0] = mat[2*4+0]+mat[0  +2];
             quatResult[1] = mat[1*4+2]+mat[2*4+1];
             quatResult[2] = tq[3];
         }
@@ -1048,7 +1048,7 @@ osg.Matrix = {
     },
 
     transformVec3: function(matrix, vector, result) {
-        var d = 1.0/(matrix[3] * vector[0] + matrix[7] * vector[1] + matrix[11] * vector[2] + matrix[15]); 
+        var d = 1.0/(matrix[3] * vector[0] + matrix[7] * vector[1] + matrix[11] * vector[2] + matrix[15]);
 
         if (result === undefined) {
             result = [];
@@ -1119,7 +1119,7 @@ osg.Matrix = {
             osg.Matrix.copy(matrix, osg.Matrix._tmp1);
             matrix = osg.Matrix._tmp1;
         }
-        
+
         if (matrix[3] === 0.0 && matrix[7] === 0.0 && matrix[11] === 0.0 && matrix[15] === 1.0) {
             return this.inverse4x3(matrix,result);
         } else {
@@ -1299,24 +1299,24 @@ osg.Matrix = {
         var dm = d-1.0;
         if( dm*dm > 1.0e-6 )  // Involves perspective, so we must
         {                       // compute the full inverse
-            
+
             var inv = osg.Matrix._tmp0;
             result[12] = result[13] = result[14] = 0.0;
 
-            var a  = matrix[3]; 
-            var b  = matrix[7]; 
+            var a  = matrix[3];
+            var b  = matrix[7];
             var c  = matrix[11];
             var px = result[0]*a + result[1]*b + result[2] *c;
             var py = result[4]*a + result[5]*b + result[6] *c;
             var pz = result[8]*a + result[9]*b + result[10]*c;
 
-            tx = matrix[12]; 
-            ty = matrix[13]; 
+            tx = matrix[12];
+            ty = matrix[13];
             tz = matrix[14];
             var one_over_s  = 1.0/(d - (tx*px + ty*py + tz*pz));
 
-            tx *= one_over_s; 
-            ty *= one_over_s; 
+            tx *= one_over_s;
+            ty *= one_over_s;
             tz *= one_over_s;  // Reduces number of calculations later on
 
             // Compute inverse of trans*corr
@@ -1340,8 +1340,8 @@ osg.Matrix = {
             osg.Matrix.preMult(result, inv); // Finish computing full inverse of mat
         } else {
 
-            tx = matrix[12]; 
-            ty = matrix[13]; 
+            tx = matrix[12];
+            ty = matrix[13];
             tz = matrix[14];
 
             // Compute translation components of mat'
@@ -1360,7 +1360,7 @@ osg.Matrix = {
             var a01 = mat[1], a02 = mat[2], a03 = mat[3];
             var a12 = mat[6], a13 = mat[7];
             var a23 = mat[11];
-            
+
             mat[1] = mat[4];
             mat[2] = mat[8];
             mat[3] = mat[12];
@@ -1530,7 +1530,7 @@ osg.ShaderGeneratorType = {
     FragmentEnd: 8
 };
 
-/** 
+/**
  * Shader manage shader for vertex and fragment, you need both to create a glsl program.
  * @class Shader
  */
@@ -1569,7 +1569,7 @@ osg.Shader.create = function( type, text )
     osg.log("osg.Shader.create is deprecated, use new osg.Shader with the same arguments instead");
     return new osg.Shader(type, text);
 };
-/** 
+/**
  * StateAttribute base class
  * @class StateAttribute
  */
@@ -1592,7 +1592,7 @@ osg.StateAttribute.PROTECTED = 4;
 osg.StateAttribute.INHERIT = 8;
 /** -*- compile-command: "jslint-cli Uniform.js" -*- */
 
-/** 
+/**
  * Uniform manage variable used in glsl shader.
  * @class Uniform
  */
@@ -1803,7 +1803,7 @@ osg.Uniform.createMatrix4 = function(mat4, name) {
 };
 /** -*- compile-command: "jslint-cli Node.js" -*- */
 
-/** 
+/**
  *  Node that can contains child node
  *  @class Node
  */
@@ -1831,7 +1831,7 @@ osg.Node.prototype = osg.objectInehrit(osg.Object.prototype, {
         return this.stateset;
     },
     getStateSet: function() { return this.stateset; },
-    accept: function(nv) { 
+    accept: function(nv) {
         if (nv.validNodeMask(this)) {
             nv.pushOntoNodePath(this);
             nv.apply(this);
@@ -1877,7 +1877,7 @@ osg.Node.prototype = osg.objectInehrit(osg.Object.prototype, {
         @type Oject
      */
     getUpdateCallback: function() { return this._updateCallbacks[0]; },
-    
+
     addUpdateCallback: function(cb) { this._updateCallbacks.push(cb);},
     getUpdateCallbackList: function() { return this._updateCallbacks; },
 
@@ -1975,7 +1975,7 @@ osg.Node.prototype = osg.objectInehrit(osg.Object.prototype, {
                 bsphere.expandRadiusBySphere(cc.getBound());
             }
 	}
-            
+
 	return bsphere;
     },
 
@@ -2009,7 +2009,7 @@ osg.Node.prototype = osg.objectInehrit(osg.Object.prototype, {
         }
         return matrixList;
     }
-    
+
 
 });
 osg.Node.prototype.objectType = osg.objectType.generate("Node");
@@ -2064,7 +2064,7 @@ osg.NodeVisitor.prototype = {
 };
 /** -*- compile-command: "jslint-cli Transform.js" -*- */
 
-/** 
+/**
  * Transform - base class for Transform type node ( Camera, MatrixTransform )
  * @class Transform
  * @inherits osg.Node
@@ -2104,17 +2104,17 @@ osg.Transform.prototype = osg.objectInehrit(osg.Node.prototype, {
         osg.Matrix.transformVec3(matrix, bsphere._center, bsphere._center);
 
         osg.Vec3.sub(xdash,
-                     bsphere._center, 
+                     bsphere._center,
                      xdash);
         var len_xdash = osg.Vec3.length(xdash);
 
-        osg.Vec3.sub(ydash, 
-                     bsphere._center, 
+        osg.Vec3.sub(ydash,
+                     bsphere._center,
                      ydash);
         var len_ydash = osg.Vec3.length(ydash);
 
-        osg.Vec3.sub(zdash, 
-                     bsphere._center, 
+        osg.Vec3.sub(zdash,
+                     bsphere._center,
                      zdash);
         var len_zdash = osg.Vec3.length(zdash);
 
@@ -2155,7 +2155,7 @@ osg.computeLocalToWorld = function (nodePath, ignoreCameras) {
     }
     return matrix;
 };
-/** 
+/**
  *  Manage Blending mode
  *  @class BlendFunc
  */
@@ -2207,36 +2207,36 @@ osg.BlendFunc.BLEND_COLOR                    = 0x8005;
 
 /** @lends osg.BlendFunc.prototype */
 osg.BlendFunc.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
-    /** 
+    /**
         StateAttribute type of BlendFunc
         @type String
      */
     attributeType: "BlendFunc",
-    /** 
+    /**
         Create an instance of this StateAttribute
-    */ 
+    */
     cloneType: function() /**osg.BlendFunc*/ {return new osg.BlendFunc(); },
-    /** 
+    /**
         @type String
-    */ 
+    */
     getType: function() { return this.attributeType;},
-    /** 
+    /**
         @type String
-    */ 
+    */
     getTypeMember: function() { return this.attributeType;},
-    setSource: function(f) { 
-        this.setSourceRGB(f); 
-        this.setSourceAlpha(f); 
+    setSource: function(f) {
+        this.setSourceRGB(f);
+        this.setSourceAlpha(f);
     },
-    setDestination: function(f) { 
-        this.setDestinationRGB(f); 
+    setDestination: function(f) {
+        this.setDestinationRGB(f);
         this.setDestinationAlpha(f);
     },
     checkSeparate: function() {
         return (this._sourceFactor !== this._sourceFactorAlpha ||
                 this._destinationFactor !== this._destinationFactorAlpha);
     },
-    setSourceRGB: function(f) { 
+    setSourceRGB: function(f) {
         if (typeof f === "string") {
             this._sourceFactor = osg.BlendFunc[f];
         } else {
@@ -2252,7 +2252,7 @@ osg.BlendFunc.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
         }
         this._separate = this.checkSeparate();
     },
-    setDestinationRGB: function(f) { 
+    setDestinationRGB: function(f) {
         if (typeof f === "string") {
             this._destinationFactor = osg.BlendFunc[f];
         } else {
@@ -2260,7 +2260,7 @@ osg.BlendFunc.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
         }
         this._separate = this.checkSeparate();
     },
-    setDestinationAlpha: function(f) { 
+    setDestinationAlpha: function(f) {
         if (typeof f === "string") {
             this._destinationFactorAlpha = osg.BlendFunc[f];
         } else {
@@ -2269,7 +2269,7 @@ osg.BlendFunc.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
         this._separate = this.checkSeparate();
     },
 
-    /** 
+    /**
         Apply the mode, must be called in the draw traversal
         @param state
     */
@@ -2280,7 +2280,7 @@ osg.BlendFunc.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
             gl.blendFuncSeparate(this._sourceFactor, this._destinationFactor,
                                  this._sourceFactorAlpha, this._destinationFactorAlpha);
         } else {
-            gl.blendFunc(this._sourceFactor, this._destinationFactor); 
+            gl.blendFunc(this._sourceFactor, this._destinationFactor);
         }
     }
 });
@@ -2459,7 +2459,7 @@ osg.BoundingSphere.prototype = {
                 var sub = osg.Vec3.sub;
                 var length = osg.Vec3.length;
                 var r = length( sub(sh._center,
-                                    this._center, 
+                                    this._center,
                                     [])
                               ) + sh._radius;
                 if (r>this._radius) {
@@ -2530,7 +2530,7 @@ osg.BoundingSphere.prototype = {
         return valid() && (osg.Vec3.length2(vc)<=radius2());
     },
     intersects: function( bs ) {
-        var lc = osg.Vec3.length2(osg.Vec3.sub(this.center() , 
+        var lc = osg.Vec3.length2(osg.Vec3.sub(this.center() ,
                                                bs.center(),
                                               []));
         return valid() && bs.valid() &&
@@ -2539,7 +2539,7 @@ osg.BoundingSphere.prototype = {
 };
 /** -*- compile-command: "jslint-cli BufferArray.js" -*- */
 
-/** 
+/**
  * BufferArray manage vertex / normal / ... array used by webgl.
  * @class BufferArray
  */
@@ -2606,7 +2606,7 @@ osg.BufferArray.create = function(type, elements, itemSize) {
     osg.log("osg.BufferArray.create is deprecated, use new osg.BufferArray with same arguments instead");
     return new osg.BufferArray(type, elements, itemSize);
 };
-/** 
+/**
  *  Manage CullFace attribute
  *  @class CullFace
  */
@@ -2665,7 +2665,7 @@ osg.CullSettings.prototype = {
     setComputeNearFar: function(value) { this._computeNearFar = value; },
     getComputeNearFar: function() { return this._computeNearFar; }
 };
-/** 
+/**
  * Camera - is a subclass of Transform which represents encapsulates the settings of a Camera.
  * @class Camera
  * @inherits osg.Transform osg.CullSettings
@@ -2694,19 +2694,19 @@ osg.Camera.STENCIL_BUFFER_BIT = 0x00000400;
 
 /** @lends osg.Camera.prototype */
 osg.Camera.prototype = osg.objectInehrit(
-    osg.CullSettings.prototype, 
+    osg.CullSettings.prototype,
     osg.objectInehrit(osg.Transform.prototype, {
 
-        setClearDepth: function(depth) { this.clearDepth = depth;}, 
+        setClearDepth: function(depth) { this.clearDepth = depth;},
         getClearDepth: function() { return this.clearDepth;},
 
-        setClearMask: function(mask) { this.clearMask = mask;}, 
+        setClearMask: function(mask) { this.clearMask = mask;},
         getClearMask: function() { return this.clearMask;},
 
         setClearColor: function(color) { this.clearColor = color;},
         getClearColor: function() { return this.clearColor;},
 
-        setViewport: function(vp) { 
+        setViewport: function(vp) {
             this.viewport = vp;
             this.getOrCreateStateSet().setAttributeAndMode(vp);
         },
@@ -2733,7 +2733,7 @@ osg.Camera.prototype = osg.objectInehrit(
         getRenderOrder: function() { return this.renderOrder; },
         setRenderOrder: function(order, orderNum) {
             this.renderOrder = order;
-            this.renderOrderNum = orderNum; 
+            this.renderOrderNum = orderNum;
         },
 
         attachTexture: function(bufferComponent, texture, level) {
@@ -2784,7 +2784,7 @@ osg.Camera.prototype.objectType = osg.objectType.generate("Camera");
 
 osg.Depth = function (func, near, far, writeMask) {
     osg.StateAttribute.call(this);
-    
+
     this._func = osg.Depth.LESS;
     this._near = 0.0;
     this._far = 1.0;
@@ -2848,7 +2848,7 @@ osg.EllipsoidModel = function() {
 osg.EllipsoidModel.prototype = {
     setRadiusEquator: function(r) { this._radiusEquator = radius; this.computeCoefficients();},
     getRadiusEquator: function() { return this._radiusEquator;},
-    setRadiusPolar: function(radius) { this._radiusPolar = radius; 
+    setRadiusPolar: function(radius) { this._radiusPolar = radius;
                                               this.computeCoefficients(); },
     getRadiusPolar: function() { return this._radiusPolar; },
     convertLatLongHeightToXYZ: function ( latitude, longitude, height ) {
@@ -2934,8 +2934,8 @@ osg.EllipsoidModel.prototype = {
         osg.Matrix.set(localToWorld,2,2, up[2]);
     }
 };
-/** 
- * FrameBufferObject manage fbo / rtt 
+/**
+ * FrameBufferObject manage fbo / rtt
  * @class FrameBufferObject
  */
 osg.FrameBufferObject = function () {
@@ -2969,7 +2969,7 @@ osg.FrameBufferObject.prototype = osg.objectInehrit(osg.StateAttribute.prototype
                 gl.bindFramebuffer(gl.FRAMEBUFFER, this.fbo);
                 var hasRenderBuffer = false;
                 for (var i = 0, l = this.attachments.length; i < l; ++i) {
-                    
+
                     if (this.attachments[i].texture === undefined) { // render buffer
                         var rb = gl.createRenderbuffer();
                         gl.bindRenderbuffer(gl.RENDERBUFFER, rb);
@@ -2980,7 +2980,7 @@ osg.FrameBufferObject.prototype = osg.objectInehrit(osg.StateAttribute.prototype
                         var texture = this.attachments[i].texture;
                         // apply on unit 0 to init it
                         state.applyTextureAttribute(0, texture);
-                        
+
                         //gl.framebufferTexture2D(gl.FRAMEBUFFER, this.attachments[i].attachment, texture.getTextureTarget(), texture.getTextureObject(), this.attachments[i].level);
                         gl.framebufferTexture2D(gl.FRAMEBUFFER, this.attachments[i].attachment, texture.getTextureTarget(), texture.getTextureObject(), this.attachments[i].level);
                     }
@@ -2989,7 +2989,7 @@ osg.FrameBufferObject.prototype = osg.objectInehrit(osg.StateAttribute.prototype
                 if (status !== 0x8CD5) {
                     osg.log("framebuffer error check " + status);
                 }
-                
+
                 if (hasRenderBuffer) { // set it to null only if used renderbuffer
                     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
                 }
@@ -3012,7 +3012,7 @@ osg.FrameStamp = function() {
     var frame = 0;
     var startSimulation = 0.0;
     var currentSimulation = 0.0;
-    
+
     this.setReferenceTime = function(s) { startSimulation = s; };
     this.setSimulationTime = function(s) { currentSimulation = s; };
     this.getReferenceTime = function() { return startSimulation; };
@@ -3022,7 +3022,7 @@ osg.FrameStamp = function() {
 };
 /** -*- compile-command: "jslint-cli Geometry.js" -*- */
 
-/** 
+/**
  * Geometry manage array and primitives to draw a geometry.
  * @class Geometry
  */
@@ -3148,7 +3148,7 @@ osg.Geometry.prototype = osg.objectInehrit(osg.Node.prototype, {
 osg.Geometry.prototype.objectType = osg.objectType.generate("Geometry");
 /** -*- compile-command: "jslint-cli Node.js" -*- */
 
-/** 
+/**
  *  Light
  *  @class Light
  */
@@ -3493,7 +3493,7 @@ osg.Light.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
 });
 /** -*- compile-command: "jslint-cli Node.js" -*- */
 
-/** 
+/**
  *  LightSource is a positioned node to use with StateAttribute Light
  *  @class LightSource
  */
@@ -3522,7 +3522,7 @@ osg.LineWidth.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
     getTypeMember: function() { return this.attributeType;},
     apply: function(state) { state.getGraphicContext().lineWidth(this.lineWidth); }
 });
-/** 
+/**
  * Material
  * @class Material
  */
@@ -3608,7 +3608,7 @@ osg.Material.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
 });
 /** -*- compile-command: "jslint-cli Node.js" -*- */
 
-/** 
+/**
  *  MatrixTransform is a Transform Node that can be customized with user matrix
  *  @class MatrixTransform
  */
@@ -3650,11 +3650,11 @@ osg.PrimitiveSet.TRIANGLES                      = 0x0004;
 osg.PrimitiveSet.TRIANGLE_STRIP                 = 0x0005;
 osg.PrimitiveSet.TRIANGLE_FAN                   = 0x0006;
 
-/** 
+/**
  * DrawArrays manage rendering primitives
  * @class DrawArrays
  */
-osg.DrawArrays = function (mode, first, count) 
+osg.DrawArrays = function (mode, first, count)
 {
     this.mode = mode;
     this.first = first;
@@ -3678,7 +3678,7 @@ osg.DrawArrays.create = function(mode, first, count) {
 };
 
 
-/** 
+/**
  * DrawArrayLengths manage rendering primitives
  * @class DrawArrayLengths
  */
@@ -3709,7 +3709,7 @@ osg.DrawArrayLengths.prototype = {
         for (var i = 0, l = array.length; i < l; i++) {
             count += array[i];
         }
-        return count; 
+        return count;
     },
     getArrayLengths: function() { return this._arrayLengths; },
     getFirst: function() { return this._first; },
@@ -3717,7 +3717,7 @@ osg.DrawArrayLengths.prototype = {
 };
 
 
-/** 
+/**
  * DrawElements manage rendering of indexed primitives
  * @class DrawElements
  */
@@ -3755,11 +3755,11 @@ osg.DrawElements.create = function(mode, indices) {
     osg.log("osg.DrawElements.create is deprecated, use new osg.DrawElements with same arguments");
     return new osg.DrawElements(mode, indices);
 };
-/** 
+/**
  * Program encapsulate an vertex and fragment shader
  * @class Program
  */
-osg.Program = function (vShader, fShader) { 
+osg.Program = function (vShader, fShader) {
     osg.StateAttribute.call(this);
 
     if (osg.Program.instanceID === undefined) {
@@ -4169,11 +4169,11 @@ osg.RenderBin.prototype = {
 
         if (detectedNaN) {
             osg.debug("warning: RenderBin::copyLeavesFromStateGraphListToRenderLeafList() detected NaN depth values, database may be corrupted.");
-        }        
+        }
         // empty the render graph list to prevent it being drawn along side the render leaf list (see drawImplementation.)
         this.stateGraphList.splice(0, this.stateGraphList.length);
     },
-    
+
     sortBackToFront: function() {
         this.copyLeavesFromStateGraphListToRenderLeafList();
         var cmp = function(a, b) {
@@ -4272,7 +4272,7 @@ osg.RenderBin.prototype = {
             }
             previous = bin.drawImplementation(state, previous);
         }
-        
+
         // draw leafs
         previous = this.drawLeafs(state, previous);
 
@@ -4379,7 +4379,7 @@ osg.RenderBin.prototype = {
             previousLeaf = leaf;
         }
 
-        
+
         // draw coarse grained ordering.
         for (var i = 0, l = stateList.length; i < l; i++) {
             var sg = stateList[i];
@@ -4482,7 +4482,7 @@ osg.RenderStage = function () {
     this._renderStage = this;
 };
 osg.RenderStage.prototype = osg.objectInehrit(osg.RenderBin.prototype, {
-    reset: function() { 
+    reset: function() {
         osg.RenderBin.prototype.reset.call(this);
         this.preRenderList.length = 0;
         this.postRenderList.length = 0;
@@ -4581,16 +4581,16 @@ osg.RenderStage.prototype = osg.objectInehrit(osg.RenderBin.prototype, {
                     var a = this.camera.attachments[key];
                     var attach;
                     if (a.texture === undefined) { //renderbuffer
-                        attach = { attachment: key, 
-                                   format: a.format, 
+                        attach = { attachment: key,
+                                   format: a.format,
                                    width: viewport.width(),
                                    height: viewport.height()
                                  };
                     } else if (a.texture !== undefined) {
-                        attach = { 
-                            attachment: key, 
-                            texture: a.texture, 
-                            level: a.level 
+                        attach = {
+                            attachment: key,
+                            texture: a.texture,
+                            level: a.level
                         };
                         if (a.format) {
                             attach.format = a.format;
@@ -4864,7 +4864,7 @@ osg.ShaderGenerator.prototype = {
             "attribute vec3 Vertex;",
             "attribute vec4 Color;",
             "attribute vec3 Normal;",
-            "uniform int ArrayColorEnabled;",
+//            "uniform int ArrayColorEnabled;",
             "uniform mat4 ModelViewMatrix;",
             "uniform mat4 ProjectionMatrix;",
             "uniform mat4 NormalMatrix;",
@@ -4888,9 +4888,9 @@ osg.ShaderGenerator.prototype = {
             "",
             "void main(void) {",
             "  gl_Position = ftransform();",
-            "  if (ArrayColorEnabled == 1)",
-            "    VertexColor = Color;",
-            "  else",
+            // "  if (ArrayColorEnabled == 1)",
+            // "    VertexColor = Color;",
+            // "  else",
             "    VertexColor = vec4(1.0,1.0,1.0,1.0);",
             ""
         ].join('\n');
@@ -4922,13 +4922,13 @@ osg.ShaderGenerator.prototype = {
             "precision highp float;",
             "#endif",
             "varying vec4 VertexColor;",
-            "uniform int ArrayColorEnabled;",
+            //"uniform int ArrayColorEnabled;",
             "vec4 fragColor;",
             ""
         ].join("\n");
 
         var modes = osg.ShaderGeneratorType;
-        
+
         shader += this._writeShaderFromMode(state, validAttributeKeys, validTextureAttributeKeys, modes.FragmentInit);
 
         shader += this._writeShaderFromMode(state, validAttributeKeys, validTextureAttributeKeys, modes.FragmentFunction);
@@ -5043,7 +5043,7 @@ osg.createTexturedBoxGeometry = function(centerx, centery, centerz,
     normal[23] = 0;
     uv[14] = 1;
     uv[15] = 1;
-    
+
 
     // +ve x plane
     vertexes[24] = centerx + dx;
@@ -5241,7 +5241,7 @@ osg.createTexturedBoxGeometry = function(centerx, centery, centerz,
     g.getAttributes().Vertex = new osg.BufferArray(osg.BufferArray.ARRAY_BUFFER, vertexes, 3 );
     g.getAttributes().Normal = new osg.BufferArray(osg.BufferArray.ARRAY_BUFFER, normal, 3 );
     g.getAttributes().TexCoord0 = new osg.BufferArray(osg.BufferArray.ARRAY_BUFFER, uv, 2 );
-    
+
     var primitive = new osg.DrawElements(osg.PrimitiveSet.TRIANGLES, new osg.BufferArray(osg.BufferArray.ELEMENT_ARRAY_BUFFER, indexes, 1 ));
     g.getPrimitives().push(primitive);
     return g;
@@ -5329,7 +5329,7 @@ osg.createTexturedQuadGeometry = function(cornerx, cornery, cornerz,
     g.getAttributes().Vertex = new osg.BufferArray(osg.BufferArray.ARRAY_BUFFER, vertexes, 3 );
     g.getAttributes().Normal = new osg.BufferArray(osg.BufferArray.ARRAY_BUFFER, normal, 3 );
     g.getAttributes().TexCoord0 = new osg.BufferArray(osg.BufferArray.ARRAY_BUFFER, uvs, 2 );
-    
+
     var primitive = new osg.DrawElements(osg.PrimitiveSet.TRIANGLES, new osg.BufferArray(osg.BufferArray.ELEMENT_ARRAY_BUFFER, indexes, 1 ));
     g.getPrimitives().push(primitive);
     return g;
@@ -5587,7 +5587,7 @@ osg.State = function () {
     this.stateSets = osg.Stack.create();
     this.uniforms = {};
     this.uniforms.uniformKeys = [];
-    
+
     this.textureAttributeMapList = [];
 
     this.attributeMap = {};
@@ -5808,7 +5808,7 @@ osg.State.prototype = {
                 activeUniforms.uniformKeys = keys;
             }
         } else {
-            
+
             //this.applyUniformList(this.uniforms, {});
 
             // custom program so we will iterate on uniform from the program and apply them
@@ -5953,7 +5953,7 @@ osg.State.prototype = {
 
     applyAttributeMap: function(attributeMap) {
         var attributeStack;
-        
+
         for (var i = 0, l = attributeMap.attributeKeys.length; i < l; i++) {
             var key = attributeMap.attributeKeys[i];
 
@@ -6175,7 +6175,7 @@ osg.State.prototype = {
 
             if (! vertexAttribMap[attrib]) {
                 gl.enableVertexAttribArray(attrib);
-                
+
                 if ( vertexAttribMap[attrib] === undefined) {
                     vertexAttribMap._keys.push(attrib);
                 }
@@ -6187,7 +6187,7 @@ osg.State.prototype = {
     }
 
 };
-/** 
+/**
  * StateSet encapsulate StateAttribute
  * @class StateSet
  */
@@ -6242,17 +6242,17 @@ osg.StateSet.prototype = osg.objectInehrit(osg.Object.prototype, {
         }
         return this.textureAttributeMapList[unit][attribute].object;
     },
-    getAttribute: function(attributeType) { 
+    getAttribute: function(attributeType) {
         if (this.attributeMap[attributeType] === undefined) {
             return undefined;
         }
         return this.attributeMap[attributeType].object;
     },
-    setAttributeAndMode: function(attribute, mode) { 
+    setAttributeAndMode: function(attribute, mode) {
         if (mode === undefined) {
             mode = osg.StateAttribute.ON;
         }
-        this._setAttribute(this.getObjectPair(attribute, mode)); 
+        this._setAttribute(this.getObjectPair(attribute, mode));
     },
 
     removeAttribute: function(attributeName) {
@@ -6309,7 +6309,7 @@ osg.StateSet.prototype = osg.objectInehrit(osg.Object.prototype, {
 });
 /** -*- compile-command: "jslint-cli Texture.js" -*- */
 
-/** 
+/**
  * Texture encapsulate webgl texture object
  * @class Texture
  * @inherits osg.StateAttribute
@@ -6409,14 +6409,14 @@ osg.Texture.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
         if (typeof(value) === "string") {
             this._wrapS = osg.Texture[value];
         } else {
-            this._wrapS = value; 
+            this._wrapS = value;
         }
     },
-    setWrapT: function(value) { 
+    setWrapT: function(value) {
         if (typeof(value) === "string") {
             this._wrapT = osg.Texture[value];
         } else {
-            this._wrapT = value; 
+            this._wrapT = value;
         }
     },
 
@@ -6429,14 +6429,14 @@ osg.Texture.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
         if (typeof(value) === "string") {
             this._minFilter = osg.Texture[value];
         } else {
-            this._minFilter = value; 
+            this._minFilter = value;
         }
     },
-    setMagFilter: function(value) { 
+    setMagFilter: function(value) {
         if (typeof(value) === "string") {
             this._magFilter = osg.Texture[value];
         } else {
-            this._magFilter = value; 
+            this._magFilter = value;
         }
     },
 
@@ -6556,7 +6556,7 @@ osg.Texture.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
 
     */
     setShaderGeneratorFunction: function(
-        /**Function*/ injectionFunction, 
+        /**Function*/ injectionFunction,
         /**osg.ShaderGeneratorType*/ mode) {
         this[mode] = injectionFunction;
     },
@@ -6615,7 +6615,7 @@ osg.Texture.create = function(url) {
     osg.log("osg.Texture.create is deprecated, use osg.Texture.createFromURL instead");
     return osg.Texture.createFromURL(url);
 };
-/** 
+/**
  * TextureCubeMap
  * @class TextureCubeMap
  * @inherits osg.Texture
@@ -6734,7 +6734,7 @@ osg.TextureCubeMap.prototype = osg.objectInehrit(osg.Texture.prototype, {
         } // render to cubemap not yet implemented
     }
 });
-osg.UpdateVisitor = function () { 
+osg.UpdateVisitor = function () {
     osg.NodeVisitor.call(this);
     var framestamp = new osg.FrameStamp();
     this.getFrameStamp = function() { return framestamp; };
@@ -6773,7 +6773,7 @@ osg.Viewport.prototype = osg.objectInehrit(osg.StateAttribute.prototype, {
     getTypeMember: function() { return this.attributeType;},
     apply: function(state) {
         var gl = state.getGraphicContext();
-        gl.viewport(this._x, this._y, this._width, this._height); 
+        gl.viewport(this._x, this._y, this._width, this._height);
         this._dirty = false;
     },
     setViewport: function(x, y, width, height) {
@@ -6825,7 +6825,7 @@ osg.CullStack.prototype = {
         this._modelviewMatrixStack.push(matrix);
 
         var lookVector = this.getLookVectorLocal();
-        this._bbCornerFar = (lookVector[0]>=0?1:0) | (lookVector[1]>=0?2:0) | (lookVector[2]>=0?4:0);        
+        this._bbCornerFar = (lookVector[0]>=0?1:0) | (lookVector[1]>=0?2:0) | (lookVector[2]>=0?4:0);
         this._bbCornerNear = (~this._bbCornerFar)&7;
     },
     popModelviewMatrix: function () {
@@ -6848,8 +6848,8 @@ osg.CullStack.prototype = {
         this._projectionMatrixStack.pop();
     }
 };
-/** 
- * CullVisitor traverse the tree and collect Matrix/State for the rendering traverse 
+/**
+ * CullVisitor traverse the tree and collect Matrix/State for the rendering traverse
  * @class CullVisitor
  */
 osg.CullVisitor = function () {
@@ -6896,7 +6896,7 @@ osg.CullVisitor.prototype = osg.objectInehrit(osg.CullStack.prototype ,osg.objec
         // corners of the bounding box.
         d_near = this.distance(bb.corner(this._bbCornerNear),matrix);
         d_far = this.distance(bb.corner(this._bbCornerFar),matrix);
-        
+
         if (d_near>d_far) {
             var tmp = d_near;
             d_near = d_far;
@@ -6925,7 +6925,7 @@ osg.CullVisitor.prototype = osg.objectInehrit(osg.CullStack.prototype ,osg.objec
             osg.log("clampProjectionMatrix not applied, invalid depth range, znear = " + znear + "  zfar = " + zfar);
             return false;
         }
-        
+
         var desired_znear, desired_zfar;
         if (zfar<znear+epsilon) {
             // znear and zfar are too close together and could cause divide by zero problems
@@ -6936,8 +6936,8 @@ osg.CullVisitor.prototype = osg.objectInehrit(osg.CullStack.prototype ,osg.objec
             // OSG_INFO << "_clampProjectionMatrix widening znear and zfar to "<<znear<<" "<<zfar<<std::endl;
         }
 
-        if (Math.abs(osg.Matrix.get(projection,0,3))<epsilon  && 
-            Math.abs(osg.Matrix.get(projection,1,3))<epsilon  && 
+        if (Math.abs(osg.Matrix.get(projection,0,3))<epsilon  &&
+            Math.abs(osg.Matrix.get(projection,1,3))<epsilon  &&
             Math.abs(osg.Matrix.get(projection,2,3))<epsilon ) {
             // OSG_INFO << "Orthographic matrix before clamping"<<projection<<std::endl;
 
@@ -6965,7 +6965,7 @@ osg.CullVisitor.prototype = osg.objectInehrit(osg.CullStack.prototype ,osg.objec
             var zfarPushRatio = 1.02;
             var znearPullRatio = 0.98;
 
-            //znearPullRatio = 0.99; 
+            //znearPullRatio = 0.99;
 
             desired_znear = znear * znearPullRatio;
             desired_zfar = zfar * zfarPushRatio;
@@ -6979,7 +6979,7 @@ osg.CullVisitor.prototype = osg.objectInehrit(osg.CullStack.prototype ,osg.objec
             // assign the clamped values back to the computed values.
             znear = desired_znear;
             zfar = desired_zfar;
-            
+
             var m22 = osg.Matrix.get(projection,2,2);
             var m32 = osg.Matrix.get(projection,3,2);
             var m23 = osg.Matrix.get(projection,2,3);
@@ -7131,11 +7131,11 @@ osg.CullVisitor.prototype[osg.Camera.prototype.objectType] = function( camera ) 
 
     // nested camera
     if (camera.getRenderOrder() === osg.Camera.NESTED_RENDER) {
-        
+
         if (camera.traverse) {
             this.traverse(camera);
         }
-        
+
     } else {
         // not tested
 
@@ -7148,7 +7148,7 @@ osg.CullVisitor.prototype[osg.Camera.prototype.objectType] = function( camera ) 
         rtts.setClearColor(camera.getClearColor());
 
         rtts.setClearMask(camera.getClearMask());
-        
+
         var vp;
         if (camera.getViewport() === undefined) {
             vp = previous_stage.getViewport();
@@ -7156,7 +7156,7 @@ osg.CullVisitor.prototype[osg.Camera.prototype.objectType] = function( camera ) 
             vp = camera.getViewport();
         }
         rtts.setViewport(vp);
-        
+
         // skip positional state for now
         // ...
 
@@ -7225,7 +7225,7 @@ osg.CullVisitor.prototype[osg.MatrixTransform.prototype.objectType] = function (
     if (stateset) {
         this.popStateSet();
     }
-    
+
     this.popModelviewMatrix();
 
 };
@@ -7291,7 +7291,7 @@ osg.CullVisitor.prototype[osg.Geometry.prototype.objectType] = function (node) {
     }
 
     var leaf = this._getReservedLeaf();
-    var depth = 0;    
+    var depth = 0;
     if (bb.valid()) {
         depth = this.distance(bb.center(), modelview);
     }
@@ -7372,7 +7372,7 @@ osgAnimation.easeOutElastic = osgAnimation.EaseOutElastic;
  */
 
 
-/** 
+/**
  *  Animation
  *  @class Animation
  */
@@ -7417,7 +7417,7 @@ osgAnimation.Animation.prototype = osg.objectInehrit(osg.Object.prototype, {
  */
 
 
-/** 
+/**
  *  BasicAnimationManager
  *  @class BasicAnimationManager
  */
@@ -7467,7 +7467,7 @@ osgAnimation.BasicAnimationManager.prototype = osg.objectInehrit(osg.Object.prot
         return true;
     },
     updateManager: function(t) {
-        
+
         var targets = this._targets;
         for (var i = 0, l = targets.length; i < l; i++) {
             targets[i].reset();
@@ -7559,7 +7559,7 @@ osgAnimation.BasicAnimationManager.prototype = osg.objectInehrit(osg.Object.prot
         if (obj.loop === undefined) {
             obj.loop = 0;
         }
-        
+
         if (this._actives[obj.priority] === undefined) {
             this._actives[obj.priority] = {};
             this._actives[obj.priority]._keys = [];
@@ -7629,7 +7629,7 @@ osgAnimation.BasicAnimationManager.prototype = osg.objectInehrit(osg.Object.prot
  */
 
 
-/** 
+/**
  *  Channel is responsible to interpolate keys
  *  @class Channel
  */
@@ -7747,7 +7747,7 @@ osgAnimation.QuatSlerpChannel.prototype = osgAnimation.Channel.prototype;
  */
 
 
-/** 
+/**
  *  Interpolator provide interpolation function to sampler
  */
 osgAnimation.Vec3LerpInterpolator = function(keys, t, result)
@@ -7765,7 +7765,7 @@ osgAnimation.Vec3LerpInterpolator = function(keys, t, result)
     } else {
         keyStart = keys[0];
         startTime = keyStart.t;
-        
+
         if (t <= startTime) {
             result.key = 0;
             result.value[0] = keyStart[0];
@@ -7785,12 +7785,12 @@ osgAnimation.Vec3LerpInterpolator = function(keys, t, result)
     var x1=keys[i1][0];
     var y1=keys[i1][1];
     var z1=keys[i1][2];
-    
+
     var t2=keys[i2].t;
     var x2=keys[i2][0];
     var y2=keys[i2][1];
     var z2=keys[i2][2];
-    
+
     var r = (t-t1)/(t2-t1);
 
     result.value[0] = x1+(x2-x1)*r;
@@ -7816,7 +7816,7 @@ osgAnimation.QuatLerpInterpolator = function(keys, t, result)
     } else {
         keyStart = keys[0];
         startTime = keyStart.t;
-        
+
         if (t <= startTime) {
             result.key = 0;
             result.value[0] = keyStart[0];
@@ -7838,13 +7838,13 @@ osgAnimation.QuatLerpInterpolator = function(keys, t, result)
     var y1=keys[i1][1];
     var z1=keys[i1][2];
     var w1=keys[i1][3];
-    
+
     var t2=keys[i2].t;
     var x2=keys[i2][0];
     var y2=keys[i2][1];
     var z2=keys[i2][2];
     var w2=keys[i2][3];
-    
+
     var r = (t-t1)/(t2-t1);
 
     result.value[0] = x1+(x2-x1)*r;
@@ -7870,7 +7870,7 @@ osgAnimation.QuatSlerpInterpolator = function(keys, t, result)
     } else {
         keyStart = keys[0];
         startTime = keyStart.t;
-        
+
         if (t <= startTime) {
             result.key = 0;
             result.value[0] = keyStart[0];
@@ -7896,7 +7896,7 @@ osgAnimation.QuatSlerpInterpolator = function(keys, t, result)
 };
 
 
-/** 
+/**
  *  Interpolator provide interpolation function to sampler
  */
 osgAnimation.FloatLerpInterpolator = function(keys, t, result)
@@ -7912,7 +7912,7 @@ osgAnimation.FloatLerpInterpolator = function(keys, t, result)
     } else {
         keyStart = keys[0];
         startTime = keyStart.t;
-        
+
         if (t <= startTime) {
             result.key = 0;
             result.value = keyStart[0];
@@ -7928,17 +7928,17 @@ osgAnimation.FloatLerpInterpolator = function(keys, t, result)
 
     var t1=keys[i1].t;
     var x1=keys[i1][0];
-    
+
     var t2=keys[i2].t;
     var x2=keys[i2][0];
-    
+
     var r = (t-t1)/(t2-t1);
     result.value = x1+(x2-x1)*r;
     result.key = i1;
 };
 
 
-/** 
+/**
  *  Interpolator provide interpolation function to sampler
  */
 osgAnimation.FloatStepInterpolator = function(keys, t, result)
@@ -7954,7 +7954,7 @@ osgAnimation.FloatStepInterpolator = function(keys, t, result)
     } else {
         keyStart = keys[0];
         startTime = keyStart.t;
-        
+
         if (t <= startTime) {
             result.key = 0;
             result.value = keyStart[0];
@@ -8032,7 +8032,7 @@ osgAnimation.createFloatKeyframe = function(t, value) {
  */
 
 
-/** 
+/**
  *  LinkVisitor search for animationUpdateCallback and link animation data
  *  @class LinkVisitor
  */
@@ -8044,7 +8044,7 @@ osgAnimation.LinkVisitor = function() {
 
 /** @lends osgAnimation.LinkVisitor.prototype */
 osgAnimation.LinkVisitor.prototype = osg.objectInehrit(osg.NodeVisitor.prototype, {
-    setAnimationMap: function(anims) { 
+    setAnimationMap: function(anims) {
         this._animations = anims;
         this._animationKeys = Object.keys(anims);
     },
@@ -8094,7 +8094,7 @@ osgAnimation.LinkVisitor.prototype = osg.objectInehrit(osg.NodeVisitor.prototype
  */
 
 
-/** 
+/**
  *  Sampler is responsible to interpolate keys
  *  @class Sampler
  */
@@ -8159,7 +8159,7 @@ osgAnimation.Sampler.prototype = {
  */
 
 
-/** 
+/**
  *  StackedTranslate
  *  @class StackedTranslate
  */
@@ -8195,7 +8195,7 @@ osgAnimation.StackedTranslate.prototype = osg.objectInehrit(osg.Object.prototype
 });
 
 
-/** 
+/**
  *  StackedRotateAxis
  *  @class StackedRotateAxis
  */
@@ -8251,7 +8251,7 @@ osgAnimation.StackedRotateAxis.prototype = osg.objectInehrit(osg.Object.prototyp
 
 
 
-/** 
+/**
  *  StackedQuaternion
  *  @class StackedQuaternion
  */
@@ -8310,7 +8310,7 @@ osgAnimation.StackedQuaternion.prototype = osg.objectInehrit(osg.Object.prototyp
  */
 
 
-/** 
+/**
  *  Target keep internal data of element to animate, and some function to merge them
  *  @class Target
  */
@@ -8440,7 +8440,7 @@ osgAnimation.QuatTarget.prototype = osg.objectInehrit(osgAnimation.Target.protot
  */
 
 
-/** 
+/**
  *  AnimationUpdateCallback
  *  @class AnimationUpdateCallback
  */
@@ -8448,7 +8448,7 @@ osgAnimation.AnimationUpdateCallback = function () {};
 
 /** @lends osgAnimation.AnimationUpdateCallback.prototype */
 osgAnimation.AnimationUpdateCallback.prototype = osg.objectInehrit(osg.Object.prototype, {
-    
+
     linkChannel: function() {},
     linkAnimation: function(anim) {
         var name = this.getName();
@@ -8488,7 +8488,7 @@ osgAnimation.AnimationUpdateCallback.prototype = osg.objectInehrit(osg.Object.pr
  */
 
 
-/** 
+/**
  *  UpdateMatrixTransform
  *  @class UpdateMatrixTransform
  */
@@ -8574,7 +8574,7 @@ osgUtil.TriangleIntersect.prototype = {
         var v0 = [];
         var v1 = [];
         var v2 = [];
-        
+
         var idx0, idx1, idx2;
         for ( var idx = 0; idx < count; idx+= 3) {
             idx0 = indexes[idx]*3;
@@ -8816,18 +8816,18 @@ osgUtil.TriangleIntersect.prototype = {
             if (ds31>0.0) {return;}
             if (ds31<d231) {return;}
         }
-        
+
 
         var r3;
         if (ds12 === 0.0) { r3 = 0.0;}
         else if (d312 !== 0.0) { r3 = ds12/d312; }
         else {return;} // the triangle and the line must be parallel intersection.
-        
+
         var r1;
         if (ds23 === 0.0) { r1 = 0.0;}
         else if (d123 !== 0.0) {r1 = ds23/d123;}
         else {return;} // the triangle and the line must be parallel intersection.
-        
+
         var r2;
         if (ds31 === 0.0) {r2=0.0;}
         else if (d231 !== 0.0) {r2 = ds31/d231; }
@@ -8842,13 +8842,13 @@ osgUtil.TriangleIntersect.prototype = {
             r2 *= inv_total_r;
             r3 *= inv_total_r;
         }
-        
+
         var inside = [];
-        osg.Vec3.add(osg.Vec3.mult(v1,r1, []),  
-                     osg.Vec3.mult(v2,r2, []), 
+        osg.Vec3.add(osg.Vec3.mult(v1,r1, []),
+                     osg.Vec3.mult(v2,r2, []),
                      inside);
-        osg.Vec3.add(osg.Vec3.mult(v3,r3, []), 
-                     inside, 
+        osg.Vec3.add(osg.Vec3.mult(v3,r3, []),
+                     inside,
                      inside);
         if (!osg.Vec3.valid(inside)) {
             osg.log("Warning: TriangleIntersect ");
@@ -8860,7 +8860,7 @@ osgUtil.TriangleIntersect.prototype = {
         }
 
         var d = osg.Vec3.dot(osg.Vec3.sub(inside,
-                                          this.start, 
+                                          this.start,
                                           []), this.dir);
 
         if (d<0.0) {return;}
@@ -8880,7 +8880,7 @@ osgUtil.TriangleIntersect.prototype = {
                          'nodepath': this.nodePath.slice(0),
                          'triangleHit': new osgUtil.TriangleHit(this.index-1, normal, r1, v1, r2, v2, r3, v3),
                          'point': pnt
-                         
+
                        });
         this.hit = true;
     }
@@ -8907,7 +8907,7 @@ osgUtil.IntersectVisitor.prototype = osg.objectInehrit(osg.NodeVisitor.prototype
         if (c < 0.0) {
             return true;
         }
-        
+
         var se = osg.Vec3.sub(end, start);
         var a = osg.Vec3.length2(se);
         var b = osg.Vec3.dot(sm, se) * 2.0;
@@ -8994,7 +8994,7 @@ osgUtil.IntersectVisitor.prototype = osg.objectInehrit(osg.NodeVisitor.prototype
             osg.Matrix.preMult(matrix, this.getProjectionMatrix());
             osg.Matrix.preMult(matrix, this.getViewMatrix());
             osg.Matrix.preMult(matrix, this.getModelMatrix());
-            
+
             var inv = [];
             var valid = osg.Matrix.inverse(matrix, inv);
             // if matrix is invalid do nothing on this node
@@ -9235,7 +9235,7 @@ osgUtil.ParameterVisitor = function() {
                                  'match' : ['color', 'diffuse', 'specular', 'ambient', 'emission']
                                };
         this.params['default'] = this.params['color'];
-        
+
     };
     Vec4Slider.prototype = osg.objectInehrit(ArraySlider.prototype, {
         createSliderUniform: function(name, prgId, uniform) {
@@ -9359,7 +9359,7 @@ osgUtil.ParameterVisitor.prototype = osg.objectInehrit(osg.NodeVisitor.prototype
             }
         }
     },
-    
+
     findExistingUniform: function(node, uniformMap) {
         var BackVisitor = function() { osg.NodeVisitor.call(this, osg.NodeVisitor.TRAVERSE_PARENTS); };
         BackVisitor.prototype = osg.objectInehrit(osg.NodeVisitor.prototype, {
@@ -9442,7 +9442,7 @@ osgUtil.ParameterVisitor.prototype = osg.objectInehrit(osg.NodeVisitor.prototype
         this.types.float.params['spotCutoff'] = { min: 0, max: 180, step: 1, value: function() { return 180;} };
         this.types.float.params['spotCutoffEnd'] = this.types.float.params['spotCutoff'];
         this.types.vec4.params['position'] = { min: -50, max: 50, step: 1, value: function() { return [0,0,1,0];} };
-        
+
         this.types.vec4.createSliderObject("ambient", attribute.getTypeMember()+"_ambient", attribute, '_ambient');
         this.types.vec4.createSliderObject("diffuse", attribute.getTypeMember()+"_diffuse", attribute, '_diffuse');
         this.types.vec4.createSliderObject("specular", attribute.getTypeMember()+"_specular", attribute, '_specular');
@@ -9767,12 +9767,12 @@ osgDB.parseSceneGraph_deprecated = function (node)
                 }
                 var tex = new osg.Texture();
                 setTexture(tex, textures[t]);
-                
+
                 osgjs.setTextureAttributeAndMode(t, tex);
                 osgjs.addUniform(osg.Uniform.createInt1(t,"Texture" + t));
             }
         }
-        
+
         var blendfunc = getFieldBackwardCompatible("BlendFunc",json);
         if (blendfunc) {
             var newblendfunc = new osg.BlendFunc();
@@ -9985,8 +9985,8 @@ WebGLUtils = function() {
      * @return {WebGLRenderingContext} The created context.
      */
     var setupWebGL = function(
-        /** Element */ canvas, 
-        /** WebGLContextCreationAttirbutes */ opt_attribs, 
+        /** Element */ canvas,
+        /** WebGLContextCreationAttirbutes */ opt_attribs,
         /** function:(msg) */ opt_onError) {
         function handleCreationError(msg) {
             var container = document.getElementsByTagName("body")[0];
@@ -10904,15 +10904,15 @@ Stats.Stats.prototype = {
         if (color === undefined) {
             color = "rgb(255,255,255)";
         }
-        this.layers.push({ 
-            previous: 0, 
+        this.layers.push({
+            previous: 0,
             color: color,
             getValue: getter
         });
     },
 
     update: function() {
-        
+
         var t = (new Date()).getTime();
         if (this.last_update === undefined) {
             this.last_update = t;
@@ -10993,7 +10993,7 @@ osgViewer.View.prototype = {
         if (traversalMask === undefined) {
             traversalMask = ~0;
         }
-        
+
         var iv = new osgUtil.IntersectVisitor();
         iv.setTraversalMask(traversalMask);
         iv.addLineSegment([x,y,0.0], [x,y,1.0]);
@@ -11019,7 +11019,7 @@ osgViewer.View.prototype = {
     setManipulator: function(manipulator) { this._manipulator = manipulator; },
 
     getLight: function() { return this._light; },
-    setLight: function(light) { 
+    setLight: function(light) {
         this._light = light;
         if (this._lightingMode !== osgViewer.View.LightingMode.NO_LIGHT) {
             this._scene.getOrCreateStateSet().setAttributeAndMode(this._light);
@@ -11166,13 +11166,13 @@ osgViewer.Viewer.prototype = osg.objectInehrit(osgViewer.View.prototype, {
             }
             return vars;
         };
-        
+
         var options = optionsURL();
-        
+
         if (options.stats === "1") {
             this.initStats(options);
         }
-        
+
         var gl = this.getGraphicContext();
         // not the best way to do it
         if (options.depth_test === "0") {
@@ -11189,7 +11189,7 @@ osgViewer.Viewer.prototype = osg.objectInehrit(osgViewer.View.prototype, {
         }
     },
 
-    
+
 
     initStats: function(options) {
 
@@ -11215,7 +11215,7 @@ osgViewer.Viewer.prototype = osg.objectInehrit(osgViewer.View.prototype, {
                 "<div id='cullTime' style='color: #73e0ff;'> cullTime </div>",
                 "<div id='drawTime' style='color: #ff0000;'> drawTime </div>",
                 "<div id='fps'> </div>",
-                
+
                 "</div>",
 
                 "<div id='StatsCanvasDiv' style='position: relative;'>",
@@ -11282,31 +11282,31 @@ osgViewer.Viewer.prototype = osg.objectInehrit(osgViewer.View.prototype, {
             }
             return null;
         };
-        this._stats.addLayer(getStyle("frameRate","color"), function(t) { 
+        this._stats.addLayer(getStyle("frameRate","color"), function(t) {
             var v = (height)/60.0 * (1000/that._frameRate);
             if (v > height) {
                 return height;
             }
             return v;} );
-        this._stats.addLayer(getStyle("frameTime", "color"), function(t) { 
+        this._stats.addLayer(getStyle("frameTime", "color"), function(t) {
             var v = that._frameTime * ratio;
             if (v > height) {
                 return height;
             }
             return v;} );
-        this._stats.addLayer(getStyle("updateTime","color"), function(t) { 
+        this._stats.addLayer(getStyle("updateTime","color"), function(t) {
             var v = that._updateTime * ratio;
             if (v > height) {
                 return height;
             }
             return v;} );
-        this._stats.addLayer(getStyle("cullTime","color"), function(t) { 
+        this._stats.addLayer(getStyle("cullTime","color"), function(t) {
             var v = that._cullTime * ratio;
             if (v > height) {
                 return height;
             }
             return v;} );
-        this._stats.addLayer(getStyle("drawTime","color"), function(t) { 
+        this._stats.addLayer(getStyle("drawTime","color"), function(t) {
             var v = that._drawTime * ratio;
             if (v > height) {
                 return height;
@@ -11586,20 +11586,20 @@ osgViewer.Viewer.prototype = osg.objectInehrit(osgViewer.View.prototype, {
                     var orgEvent = event || window.event, args = [].slice.call( arguments, 1 ), delta = 0, returnValue = true, deltaX = 0, deltaY = 0;
                     //event = $.event.fix(orgEvent);
                     event.type = "mousewheel";
-                    
+
                     // Old school scrollwheel delta
                     if ( event.wheelDelta ) { delta = event.wheelDelta/120; }
                     if ( event.detail     ) { delta = -event.detail/3; }
-                    
+
                     // New school multidimensional scroll (touchpads) deltas
                     deltaY = delta;
-                    
+
                     // Gecko
                     if ( orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS ) {
                         deltaY = 0;
                         deltaX = -1*delta;
                     }
-                    
+
                     // Webkit
                     if ( orgEvent.wheelDeltaY !== undefined ) { deltaY = orgEvent.wheelDeltaY/120; }
                     if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = -1*orgEvent.wheelDeltaX/120; }
@@ -11653,7 +11653,7 @@ osgViewer.Viewer.prototype = osg.objectInehrit(osgViewer.View.prototype, {
                 var vp = camera.getViewport();
                 var widthChangeRatio = w/vp.width();
                 var heightChangeRatio = h/vp.height();
-                var aspectRatioChange = widthChangeRatio / heightChangeRatio; 
+                var aspectRatioChange = widthChangeRatio / heightChangeRatio;
                 vp.setViewport(vp.x()*widthChangeRatio, vp.y()*heightChangeRatio, vp.width()*widthChangeRatio, vp.height()*heightChangeRatio);
 
                 if (aspectRatioChange !== 1.0) {
@@ -11676,7 +11676,7 @@ osgGA = {};
  *  Cedric Pinson <cedric.pinson@plopbyte.com>
  */
 
-/** 
+/**
  *  Manipulator
  *  @class
  */
@@ -11745,7 +11745,7 @@ osgGA.OrbitManipulatorMode = {
     Zoom: 2
 };
 
-/** 
+/**
  *  OrbitManipulator
  *  @class
  */
@@ -12011,7 +12011,7 @@ osgGA.OrbitManipulator.prototype = osg.objectInehrit(osgGA.Manipulator.prototype
                 this.timeMotion = undefined;
             }
         }
-        
+
         var inv = [];
         var eye = [];
         osg.Matrix.inverse(this.rotation, inv);
@@ -12021,7 +12021,7 @@ osgGA.OrbitManipulator.prototype = osg.objectInehrit(osgGA.Manipulator.prototype
 
         osg.Matrix.makeLookAt(osg.Vec3.add(target, eye, eye),
                               target,
-                              [0,0,1], 
+                              [0,0,1],
                               inv);
         return inv;
     }
@@ -12034,7 +12034,7 @@ osgGA.OrbitManipulator.prototype = osg.objectInehrit(osgGA.Manipulator.prototype
  */
 
 
-/** 
+/**
  *  FirstPersonManipulator
  *  @class
  */
@@ -12149,7 +12149,7 @@ osgGA.FirstPersonManipulator.prototype = osg.objectInehrit(osgGA.Manipulator.pro
         var d = osg.Vec3.mult(osg.Vec3.normalize(cx,cx), distance, []);
         this.eye = osg.Vec3.add(this.eye, d, []);
     },
-    
+
     keydown: function(event) {
         if (event.keyCode === 32) {
             this.computeHomePosition();
@@ -12200,7 +12200,7 @@ osgDB.ObjectWrapper.serializers.osg.Object = function(jsonObj, obj) {
     if (!check(jsonObj)) {
         return false;
     }
-    
+
     if (jsonObj.Name) {
         obj.setName(jsonObj.Name);
     }
@@ -12229,7 +12229,7 @@ osgDB.ObjectWrapper.serializers.osg.Node = function(jsonObj, node) {
     if (jsonObj.StateSet) {
         node.setStateSet(osgDB.ObjectWrapper.readObject(jsonObj.StateSet));
     }
-    
+
     if (jsonObj.Children) {
         for (var i = 0, k = jsonObj.Children.length; i < k; i++) {
             var obj = osgDB.ObjectWrapper.readObject(jsonObj.Children[i]);
@@ -12248,7 +12248,7 @@ osgDB.ObjectWrapper.serializers.osg.StateSet = function(jsonObj, stateSet) {
     if (!check(jsonObj)) {
         return;
     }
-    
+
     osgDB.ObjectWrapper.serializers.osg.Object(jsonObj, stateSet);
 
     if (jsonObj.AttributeList) {
@@ -12399,13 +12399,13 @@ osgDB.ObjectWrapper.serializers.osg.Geometry = function(jsonObj, node) {
     var mode, first, count, array;
     for (var i = 0, l = jsonObj.PrimitiveSetList.length; i < l; i++) {
         var entry = jsonObj.PrimitiveSetList[i];
-        
+
         var drawElementPrimitive = entry.DrawElementUShort || entry.DrawElementUByte || entry.DrawElementUInt || entry.DrawElementsUShort || entry.DrawElementsUByte || entry.DrawElementsUInt || undefined;
         if ( drawElementPrimitive ) {
             var jsonArray = drawElementPrimitive.Indices;
             mode = drawElementPrimitive.Mode;
-            array = new osg.BufferArray(osg.BufferArray[jsonArray.Type], 
-                                            jsonArray.Elements, 
+            array = new osg.BufferArray(osg.BufferArray[jsonArray.Type],
+                                            jsonArray.Elements,
                                             jsonArray.ItemSize );
             if (!mode) {
                 mode = osg.PrimitiveSet.TRIANGLES;
@@ -12465,7 +12465,7 @@ osgDB.ObjectWrapper.serializers.osg.Geometry = function(jsonObj, node) {
 osgDB.ObjectWrapper.serializers.osgAnimation = {};
 osgDB.ObjectWrapper.serializers.osgAnimation.Animation = function(jsonObj, animation) {
     // check
-    // 
+    //
     var check = function(o) {
         if (o.Name && o.Channels && o.Channels.length > 0) {
             return true;
@@ -12496,7 +12496,7 @@ osgDB.ObjectWrapper.serializers.osgAnimation.Animation = function(jsonObj, anima
 
 osgDB.ObjectWrapper.serializers.osgAnimation.Vec3LerpChannel = function(jsonObj, channel) {
     // check
-    // 
+    //
     var check = function(o) {
         if (o.KeyFrames && o.TargetName && o.Name) {
             return true;
@@ -12538,7 +12538,7 @@ osgDB.ObjectWrapper.serializers.osgAnimation.QuatSlerpChannel = function(jsonObj
 
 osgDB.ObjectWrapper.serializers.osgAnimation.FloatLerpChannel = function(jsonObj, channel) {
     // check
-    // 
+    //
     var check = function(o) {
         if (o.KeyFrames && o.TargetName && o.Name) {
             return true;
@@ -12571,7 +12571,7 @@ osgDB.ObjectWrapper.serializers.osgAnimation.FloatLerpChannel = function(jsonObj
 
 osgDB.ObjectWrapper.serializers.osgAnimation.BasicAnimationManager = function(jsonObj, manager) {
     // check
-    // 
+    //
     var check = function(o) {
         if (o.Animations) {
             return true;
@@ -12595,7 +12595,7 @@ osgDB.ObjectWrapper.serializers.osgAnimation.BasicAnimationManager = function(js
 
 osgDB.ObjectWrapper.serializers.osgAnimation.UpdateMatrixTransform = function(jsonObj, umt) {
     // check
-    // 
+    //
     var check = function(o) {
         if (o.Name && o.StackedTransforms) {
             return true;
@@ -12623,7 +12623,7 @@ osgDB.ObjectWrapper.serializers.osgAnimation.UpdateMatrixTransform = function(js
 
 osgDB.ObjectWrapper.serializers.osgAnimation.StackedTranslate = function(jsonObj, st) {
     // check
-    // 
+    //
     var check = function(o) {
         if (o.Name) {
             return true;
@@ -12647,7 +12647,7 @@ osgDB.ObjectWrapper.serializers.osgAnimation.StackedTranslate = function(jsonObj
 
 osgDB.ObjectWrapper.serializers.osgAnimation.StackedQuaternion = function(jsonObj, st) {
     // check
-    // 
+    //
     var check = function(o) {
         if (o.Name) {
             return true;
@@ -12670,7 +12670,7 @@ osgDB.ObjectWrapper.serializers.osgAnimation.StackedQuaternion = function(jsonOb
 
 osgDB.ObjectWrapper.serializers.osgAnimation.StackedRotateAxis = function(jsonObj, st) {
     // check
-    // 
+    //
     var check = function(o) {
         if (o.Axis) {
             return true;
